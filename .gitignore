@@ -1,0 +1,6 @@
+*/.vs/*
+*/x64/*
+Debug/*
+/.vs
+/WiimoteMouse/Debug
+/x64
