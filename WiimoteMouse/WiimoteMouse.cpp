@@ -18,7 +18,17 @@ extern "C" {
 	int wiiuse_poll(wiimote_t**, int);
 }
 
+bool allowUsage = true;
 
+
+void ToggleIR(wiimote_t* mote)
+{
+	if (!WIIUSE_USING_IR(mote) && allowUsage == false)
+	{
+		wiiuse_set_ir(mote, 1);
+	}
+	allowUsage = !allowUsage;
+}
 
 
 void MoveMouse(int x, int y)
@@ -70,7 +80,15 @@ void MoveMouse(int x, int y)
 
 void handle_event(wiimote* remote)
 {
-	if (WIIUSE_USING_IR(remote))
+
+
+	if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_HOME) && IS_PRESSED(remote, WIIMOTE_BUTTON_TWO))
+	{
+		ToggleIR(remote);
+	}
+
+	// only do mouse stuff if the IR sensor is on!
+	if (WIIUSE_USING_IR(remote) && allowUsage)
 	{
 		int meanX = 0;
 		int meanY = 0;
@@ -102,66 +120,66 @@ void handle_event(wiimote* remote)
 		if (validSources % 2 == 0 && validSources != 0)
 		{
 			//std::cout << "Mean cursor pos: " << meanX / validSources << " " << meanY / validSources << std::endl;
-			
+
 			// Move to the mean  cursor position - the average of the two sources.
 			MoveMouse(meanX / validSources, meanY / validSources);
 		};
+
+
+		if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_A))
+		{
+			// Use the Windows API to set up and send a left click
+			INPUT input;
+			input.type = INPUT_MOUSE;
+			input.mi = MOUSEINPUT();
+			input.mi.time = 0;
+			input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+
+
+			SendInput(1, &input, sizeof(INPUT));
+		}
+
+
+		if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_B))
+		{
+			// Use the Windows API to set up and send a right click
+			INPUT input;
+			input.type = INPUT_MOUSE;
+			input.mi = MOUSEINPUT();
+			input.mi.time = 0;
+			input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
+
+
+			SendInput(1, &input, sizeof(INPUT));
+		}
+
+		if (IS_RELEASED(remote, WIIMOTE_BUTTON_B))
+		{
+			// Use the Windows API to set up and send a left release
+			INPUT input;
+			input.type = INPUT_MOUSE;
+			input.mi = MOUSEINPUT();
+			input.mi.time = 0;
+			input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
+
+
+			SendInput(1, &input, sizeof(INPUT));
+		}
+
+		if (IS_RELEASED(remote, WIIMOTE_BUTTON_A))
+		{
+			// Use the Windows API to set up and send a right release
+			INPUT input;
+			input.type = INPUT_MOUSE;
+			input.mi = MOUSEINPUT();
+			input.mi.time = 0;
+			input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+
+			SendInput(1, &input, sizeof(INPUT));
+		}
+
+
 	}
-
-
-	if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_A)) 
-	{
-		// Use the Windows API to set up and send a left click
-		INPUT input;
-		input.type = INPUT_MOUSE;
-		input.mi = MOUSEINPUT();
-		input.mi.time = 0;
-		input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-		
-
-		SendInput(1, &input, sizeof(INPUT));
-	}
-
-
-	if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_B)) 
-	{
-		// Use the Windows API to set up and send a right click
-		INPUT input;
-		input.type = INPUT_MOUSE;
-		input.mi = MOUSEINPUT();
-		input.mi.time = 0;
-		input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
-
-
-		SendInput(1, &input, sizeof(INPUT));
-	}
-
-	if (IS_RELEASED(remote, WIIMOTE_BUTTON_B)) 
-	{
-		// Use the Windows API to set up and send a left release
-		INPUT input;
-		input.type = INPUT_MOUSE;
-		input.mi = MOUSEINPUT();
-		input.mi.time = 0;
-		input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
-
-
-		SendInput(1, &input, sizeof(INPUT));
-	}
-
-	if (IS_RELEASED(remote, WIIMOTE_BUTTON_A))
-	{
-		// Use the Windows API to set up and send a right release
-		INPUT input;
-		input.type = INPUT_MOUSE;
-		input.mi = MOUSEINPUT();
-		input.mi.time = 0;
-		input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-
-		SendInput(1, &input, sizeof(INPUT));
-	}
-
-	
 
 }
 // Currently unused bc I couldn't figure out how to make it work-
@@ -264,16 +282,18 @@ int main()
 		Sleep(150);
 
 
+		// enable IR, if it's not enabled.
+		if (!WIIUSE_USING_IR(mote[0]))
+		{
+			wiiuse_set_ir(mote[0], 1);
+			wiiuse_set_ir_sensitivity(mote[0], 2);
+			//wiiuse_set_ir_vres(mote[0], width+50, height+50);
+		}
+
+
 		// Now, if the wii remote is connected, begin looping again.
 		while (WIIMOTE_IS_CONNECTED(mote[0]))
 		{
-			// enable IR, if it's not enabled.
-			if (!WIIUSE_USING_IR(mote[0]))
-			{
-				wiiuse_set_ir(mote[0], 1);
-				wiiuse_set_ir_sensitivity(mote[0], 2);
-				//wiiuse_set_ir_vres(mote[0], width+50, height+50);
-			}
 			
 			// If the wii remote gives an event,
 			if (wiiuse_poll(mote, 1))
