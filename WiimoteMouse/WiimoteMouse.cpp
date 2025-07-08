@@ -12,6 +12,10 @@ extern "C" {
 	// C Function call
 	wiimote_t** wiiuse_init(int);
 	int wiiuse_find(wiimote_t**, int, int);
+	int wiiuse_connect(wiimote_t**, int);
+	void wiiuse_set_ir(wiimote_t*, int);
+	void wiiuse_set_ir_sensitivity(wiimote_t*, int);
+	int wiiuse_poll(wiimote_t**, int);
 }
 
 
