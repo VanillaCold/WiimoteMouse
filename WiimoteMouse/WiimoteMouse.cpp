@@ -42,17 +42,13 @@ void MoveMouse(int x, int y)
 
 	// For instance,
 
-	// about 250 = the left edge
-	// and about 700 = the right edge.
+	// Give a buffer of 40 on X and 20 on Y.
+	// the max right value is about 550, and the max y value is about 420, so divide by this number minus twice the buffer size.
 
-	// so, subtract 250 and then divide by 450.
-	// This isn't exact, since the wii remote is weird, so I do apply an offset afterwards too.
-	// this offset is just arbitrary.
-
-	// I do plan on making all this customisable. The base values shouldn't need to be changed, I think, but the offsets will need to be malleable.
+	// I do plan on making all this customisable. The base values shouldn't need to be changed, I think, but the buffer will need to be malleable.
 	
-	float normX = ((x - 250) / 450.0f) - 0.05f;
-	float normY = (y - 200) / 600.0f + 0.1f;
+	float normX = ((x-40) / 470.0f);
+	float normY = (y-20) / 380.0f;
 
 
 	printf("%f, %f, \n", normX, normY);
@@ -137,12 +133,15 @@ void handle_event(wiimote* remote)
 		//printf("IR z distance: %f\n", remote->ir.z);
 
 		// If there's a non-even or zero number of IR dots detected, we don't want to use the info to move the mouse.
-		if (validSources % 2 == 0 && validSources != 0)
+		if (validSources != 0)
 		{
 			//std::cout << "Mean cursor pos: " << meanX / validSources << " " << meanY / validSources << std::endl;
 
 			// Move to the mean  cursor position - the average of the two sources.
-			MoveMouse(meanX / validSources, meanY / validSources);
+			
+			MoveMouse(remote->ir.x, remote->ir.y);
+
+			//MoveMouse(meanX / validSources, meanY / validSources);
 		};
 
 
