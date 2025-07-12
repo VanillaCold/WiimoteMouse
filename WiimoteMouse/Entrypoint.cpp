@@ -19,7 +19,7 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
         // All painting occurs here, between BeginPaint and EndPaint.
 
-        FillRect(hdc, &ps.rcPaint, HBRUSH(GetStockObject(BLACK_BRUSH)));
+        FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(0xFF,0,0)));
 
         EndPaint(hwnd, &ps);
     }

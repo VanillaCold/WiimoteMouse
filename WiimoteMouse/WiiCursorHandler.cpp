@@ -27,13 +27,7 @@ void WiiCursorHandler::OnConnect()
     );
 
 
-    auto dc = GetDC(mpWindow);
-
-    SetBkMode(dc, TRANSPARENT);
-    SetLayeredWindowAttributes(mpWindow, 0x00000000, 200, LWA_ALPHA | LWA_COLORKEY);
-    SetBkColor(dc, 0x00000000);
-
-    ReleaseDC(mpWindow, dc);
+    SetLayeredWindowAttributes(mpWindow, RGB(0xFF, 0, 0), 200, LWA_ALPHA | LWA_COLORKEY);
 
     UpdateWindow(mpWindow);
 
