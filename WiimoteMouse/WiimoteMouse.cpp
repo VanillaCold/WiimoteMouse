@@ -7,6 +7,8 @@
 #include <Windows.h>
 #include <thread>
 
+#include "WiimoteMouse.h"
+
 
 extern "C" {
 	// C Function call
@@ -20,8 +22,7 @@ extern "C" {
 
 bool allowUsage = true;
 
-
-void ToggleIR(wiimote_t* mote)
+void WiimoteMouse::ToggleIR(wiimote_t* mote)
 {
 	if (!WIIUSE_USING_IR(mote) && allowUsage == false)
 	{
@@ -31,7 +32,7 @@ void ToggleIR(wiimote_t* mote)
 }
 
 
-void MoveMouse(int x, int y)
+void WiimoteMouse::MoveMouse(int x, int y)
 {
 	printf("%i, %i, \n", x, y);
 
@@ -91,7 +92,7 @@ void MoveMouse(int x, int y)
 	}
 }
 
-void handle_event(wiimote* remote)
+void WiimoteMouse::HandleEvent(wiimote* remote)
 {
 
 
@@ -113,7 +114,6 @@ void handle_event(wiimote* remote)
 		for (int i = 0; i < 4; ++i) {
 			if (remote->ir.dot[i].visible) {
 
-				HDC screenDC = ::GetDC(0);
 				
 				
 				//HDC screenDC = ::GetDC(0);
@@ -128,6 +128,7 @@ void handle_event(wiimote* remote)
 				//}
 			}
 		}
+
 
 		//printf("IR cursor: (%u, %u)\n", remote->ir.x, remote->ir.y);
 		//printf("IR z distance: %f\n", remote->ir.z);
@@ -256,7 +257,7 @@ void handle_event(wiimote* remote)
 
 }
 // Currently unused bc I couldn't figure out how to make it work-
-void low_battery_alert(wiimote_t* remote)
+/*void low_battery_alert(wiimote_t* remote)
 {
 	
 
@@ -303,9 +304,9 @@ void low_battery_alert(wiimote_t* remote)
 
 	// low battery has been alerted, so we don't alert again.
 	wiiuse_set_leds(remote, WIIMOTE_LED_1);
-}
+}*/
 
-int main()
+int WiimoteMouse::MainLoop()
 {
 
 	auto width = GetSystemMetrics(SM_CXSCREEN);
@@ -377,11 +378,11 @@ int main()
 				// and get its most recent event.
 				switch (remote->event)
 				{
-
+					
 					// We only care about regular events, so break for everything else - outside of a status event.
 				case WIIUSE_EVENT:
 					// forward to the handle_event script.
-					handle_event(remote);
+					HandleEvent(remote);
 					break;
 				default:
 					break;
@@ -397,6 +398,8 @@ int main()
     
   
 }
+
+
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu

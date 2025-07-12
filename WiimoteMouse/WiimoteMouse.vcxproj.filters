@@ -18,5 +18,19 @@
     <ClCompile Include="WiimoteMouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WiiCursorHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Entrypoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="WiiCursorHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WiimoteMouse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
