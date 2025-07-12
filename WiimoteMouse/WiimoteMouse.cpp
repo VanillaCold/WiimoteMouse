@@ -33,12 +33,29 @@ void ToggleIR(wiimote_t* mote)
 
 void MoveMouse(int x, int y)
 {
+	printf("%i, %i, \n", x, y);
+
 	// "normalise" the position
 	// Through trial and error, I found that these numbers work best on my screen for finding the boundaries on where the wii remote can reach.
 	// I don't think it's particularly normalised, but oh well.
 	// Simultaneously, I do need to make a way to calibrate this with anyone's screen.
-	float normX = (x - 300) / 480.0f;
-	float normY = (y - 80) / 520.0f;
+
+	// For instance,
+
+	// about 250 = the left edge
+	// and about 700 = the right edge.
+
+	// so, subtract 250 and then divide by 450.
+	// This isn't exact, since the wii remote is weird, so I do apply an offset afterwards too.
+	// this offset is just arbitrary.
+
+	// I do plan on making all this customisable. The base values shouldn't need to be changed, I think, but the offsets will need to be malleable.
+	
+	float normX = ((x - 250) / 450.0f) - 0.05f;
+	float normY = (y - 200) / 600.0f + 0.1f;
+
+
+	printf("%f, %f, \n", normX, normY);
 
 	// get the screen height & width.
 	auto width = GetSystemMetrics(SM_CXSCREEN);
@@ -49,8 +66,8 @@ void MoveMouse(int x, int y)
 	normY *= height;
 
 	// make sure the X and Y don't exceed the screen resolution, and that they aren't negative.
-	normX = max(min(width, normX), 0);
-	normY = max(min(height, normY), 0);
+	//normX = max(min(width, normX), 0);
+	//normY = max(min(height, normY), 0);
 
 
 	
@@ -97,9 +114,12 @@ void handle_event(wiimote* remote)
 
 		// In this case, we're only interested in the first two sensors,
 		// as dealing with errors in the other two could result in some wonky shenanigans.
-		for (int i = 0; i < 2; ++i) {
+		for (int i = 0; i < 4; ++i) {
 			if (remote->ir.dot[i].visible) {
 
+				HDC screenDC = ::GetDC(0);
+				
+				
 				//HDC screenDC = ::GetDC(0);
 				//::Rectangle(screenDC, remote->ir.dot[i].x-1, remote->ir.dot[i].y-1, remote->ir.dot[i].x+1, remote->ir.dot[i].y+1);
 				//::ReleaseDC(0, screenDC);
@@ -153,6 +173,20 @@ void handle_event(wiimote* remote)
 			SendInput(1, &input, sizeof(INPUT));
 		}
 
+
+		if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_ONE))
+		{
+			// Use the Windows API to set up and send a right click
+			INPUT input;
+			input.type = INPUT_MOUSE;
+			input.mi = MOUSEINPUT();
+			input.mi.time = 0;
+			input.mi.dwFlags = MOUSEEVENTF_MIDDLEDOWN;
+
+
+			SendInput(1, &input, sizeof(INPUT));
+		}
+
 		if (IS_RELEASED(remote, WIIMOTE_BUTTON_B))
 		{
 			// Use the Windows API to set up and send a left release
@@ -174,6 +208,46 @@ void handle_event(wiimote* remote)
 			input.mi = MOUSEINPUT();
 			input.mi.time = 0;
 			input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+
+			SendInput(1, &input, sizeof(INPUT));
+		}
+
+		if (IS_RELEASED(remote, WIIMOTE_BUTTON_ONE))
+		{
+			// Use the Windows API to set up and send a right release
+			INPUT input;
+			input.type = INPUT_MOUSE;
+			input.mi = MOUSEINPUT();
+			input.mi.time = 0;
+			input.mi.dwFlags = MOUSEEVENTF_MIDDLEUP;
+
+			SendInput(1, &input, sizeof(INPUT));
+		}
+
+		if (IS_PRESSED(remote, WIIMOTE_BUTTON_UP))
+		{
+
+			// Use the Windows API to set up and send a right release
+			INPUT input;
+			input.type = INPUT_MOUSE;
+			input.mi = MOUSEINPUT();
+			input.mi.time = 0;
+			input.mi.dwFlags = MOUSEEVENTF_WHEEL;
+			input.mi.mouseData = 20;
+
+			SendInput(1, &input, sizeof(INPUT));
+		}
+
+		if (IS_PRESSED(remote, WIIMOTE_BUTTON_DOWN))
+		{
+
+			// Use the Windows API to set up and send a right release
+			INPUT input;
+			input.type = INPUT_MOUSE;
+			input.mi = MOUSEINPUT();
+			input.mi.time = 0;
+			input.mi.dwFlags = MOUSEEVENTF_WHEEL;
+			input.mi.mouseData = -20;
 
 			SendInput(1, &input, sizeof(INPUT));
 		}
@@ -267,6 +341,7 @@ int main()
 			printf("Connected to %i wiimotes (of %i found).\n", connected, found);
 		}
 		else {
+			std::cout << "Failed to connect" << std::endl;
 			continue;
 		}
 
@@ -286,7 +361,7 @@ int main()
 		if (!WIIUSE_USING_IR(mote[0]))
 		{
 			wiiuse_set_ir(mote[0], 1);
-			wiiuse_set_ir_sensitivity(mote[0], 2);
+			//wiiuse_set_ir_sensitivity(mote[0], 2);
 			//wiiuse_set_ir_vres(mote[0], width+50, height+50);
 		}
 
@@ -316,7 +391,7 @@ int main()
 
 			}
 		}
-		
+		//Sleep(50);
 
 	}
 	
