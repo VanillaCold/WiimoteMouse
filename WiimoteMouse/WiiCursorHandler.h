@@ -9,11 +9,13 @@
 class WiiCursorHandler
 {
 public:
+	WiiCursorHandler(HINSTANCE pInstance);
 
 	void OnConnect();
 	void OnDisconnect();
 
-	void Update();
-	HWND window;
+	void UpdatePosition(int x, int y, float angle);
+	HWND mpWindow;
+	HINSTANCE mpHInstance;
 	
 };

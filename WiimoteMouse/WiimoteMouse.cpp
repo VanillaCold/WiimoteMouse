@@ -89,6 +89,7 @@ void WiimoteMouse::MoveMouse(int x, int y)
 
 		// lastly, set the cursor position using the Windows API.
 		SetCursorPos(newx, newy);
+		mpCursorHandle->UpdatePosition(newx, newy, 0);
 	}
 }
 
@@ -306,8 +307,9 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 	wiiuse_set_leds(remote, WIIMOTE_LED_1);
 }*/
 
-int WiimoteMouse::MainLoop()
+int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 {
+	mpCursorHandle = pCursorHandler;
 
 	auto width = GetSystemMetrics(SM_CXSCREEN);
 	auto height = GetSystemMetrics(SM_CYSCREEN);
@@ -365,6 +367,7 @@ int WiimoteMouse::MainLoop()
 			//wiiuse_set_ir_vres(mote[0], width+50, height+50);
 		}
 
+		mpCursorHandle->OnConnect();
 
 		// Now, if the wii remote is connected, begin looping again.
 		while (WIIMOTE_IS_CONNECTED(mote[0]))
