@@ -14,10 +14,10 @@ void WiiCursorHandler::OnConnect()
         WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST,                              // Optional window styles.
         L"STATIC",                     // Window class
         L"Learn to Program Windows",    // Window text
-        WS_OVERLAPPEDWINDOW,            // Window style
+        WS_POPUPWINDOW,            // Window style
 
         // Size and position
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT, 128, 128,
 
         NULL,       // Parent window    
         NULL,       // Menu
@@ -25,8 +25,19 @@ void WiiCursorHandler::OnConnect()
         NULL        // Additional application data
     );
 
-    SetLayeredWindowAttributes(mpWindow, 0xFFFFFFFF, 25, LWA_ALPHA);
+
+    auto dc = GetDC(mpWindow);
+
+    SetBkMode(dc, TRANSPARENT);
+    SetLayeredWindowAttributes(mpWindow, 0x00000000, 200, LWA_ALPHA | LWA_COLORKEY);
+    SetBkColor(dc, 0x00000000);
+
+    ReleaseDC(mpWindow, dc);
+
+    
+
     ShowWindow(mpWindow, 1);
+    SetWindowPos(mpWindow, nullptr, 0, 0, 128, 128, 0);
 }
 
 void WiiCursorHandler::OnDisconnect()
