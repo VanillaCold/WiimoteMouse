@@ -1,5 +1,6 @@
 #include "WiiCursorHandler.h";
 
+#include <thread>
 
 
 WiiCursorHandler::WiiCursorHandler(HINSTANCE pInstance)
@@ -12,9 +13,9 @@ void WiiCursorHandler::OnConnect()
     
     mpWindow = CreateWindowEx(
         WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST,                              // Optional window styles.
-        L"STATIC",                     // Window class
+        L"WiiCursorWinProc",                     // Window class
         L"Learn to Program Windows",    // Window text
-        WS_POPUPWINDOW,            // Window style
+        WS_BORDER,            // Window style
 
         // Size and position
         CW_USEDEFAULT, CW_USEDEFAULT, 128, 128,
@@ -34,14 +35,30 @@ void WiiCursorHandler::OnConnect()
 
     ReleaseDC(mpWindow, dc);
 
+    UpdateWindow(mpWindow);
+
     
 
     ShowWindow(mpWindow, 1);
     SetWindowPos(mpWindow, nullptr, 0, 0, 128, 128, 0);
+
+
 }
 
 void WiiCursorHandler::OnDisconnect()
 {
+}
+
+void WiiCursorHandler::WindowUpdate()
+{
+    UpdateWindow(mpWindow);
+    MSG msg = { };
+    if (PeekMessage(&msg, NULL, 0, 0, 3) > 0)
+    {
+        TranslateMessage(&msg);
+
+        DispatchMessage(&msg);
+    }
 }
 
 void WiiCursorHandler::UpdatePosition(int x, int y, float angle)

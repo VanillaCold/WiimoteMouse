@@ -19,7 +19,7 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
         // All painting occurs here, between BeginPaint and EndPaint.
 
-        FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
+        FillRect(hdc, &ps.rcPaint, HBRUSH(GetStockObject(BLACK_BRUSH)));
 
         EndPaint(hwnd, &ps);
     }
@@ -31,6 +31,16 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
+    const wchar_t CLASS_NAME[] = L"WiiCursorWinProc";
+
+    WNDCLASS wc = { };
+
+    wc.lpfnWndProc = WiiCursorWinProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = CLASS_NAME;
+
+    RegisterClass(&wc);
+
 	auto mouse = new WiimoteMouse();
 	auto cursor = new WiiCursorHandler(hInstance);
 	mouse->MainLoop(cursor);

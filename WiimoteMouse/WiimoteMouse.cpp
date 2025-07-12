@@ -369,6 +369,9 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 
 		mpCursorHandle->OnConnect();
 
+
+		auto start = std::chrono::steady_clock::now();
+
 		// Now, if the wii remote is connected, begin looping again.
 		while (WIIMOTE_IS_CONNECTED(mote[0]))
 		{
@@ -392,6 +395,14 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 				}
 			
 
+			}
+
+
+			std::chrono::milliseconds timeSpent = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
+			if (timeSpent.count() > 17)
+			{
+				start = std::chrono::steady_clock::now();
+				mpCursorHandle->WindowUpdate();
 			}
 		}
 		//Sleep(50);

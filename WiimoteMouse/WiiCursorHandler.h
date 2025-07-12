@@ -14,6 +14,8 @@ public:
 	void OnConnect();
 	void OnDisconnect();
 
+	void WindowUpdate();
+
 	void UpdatePosition(int x, int y, float angle);
 	HWND mpWindow;
 	HINSTANCE mpHInstance;
