@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+//#include <iostream>
 #include <wiiuse.h>
 
 #include <Windows.h>

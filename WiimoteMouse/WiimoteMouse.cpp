@@ -90,6 +90,8 @@ void WiimoteMouse::MoveMouse(int x, int y)
 		// lastly, set the cursor position using the Windows API.
 		SetCursorPos(newx, newy);
 		mpCursorHandle->UpdatePosition(newx, newy, 0);
+
+		while (ShowCursor(false) >= 0);
 	}
 }
 
@@ -399,7 +401,7 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 
 
 			std::chrono::milliseconds timeSpent = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
-			if (timeSpent.count() > 17)
+			if (timeSpent.count() > 33)
 			{
 				start = std::chrono::steady_clock::now();
 				mpCursorHandle->WindowUpdate();
