@@ -34,7 +34,7 @@ void WiiCursorHandler::OnConnect()
     auto dc = GetDC(mpWindow);
 
     SetBkMode(dc, TRANSPARENT);
-    SetLayeredWindowAttributes(mpWindow, RGB(0x1,0x1,0x1), 255, LWA_ALPHA | LWA_COLORKEY);
+    SetLayeredWindowAttributes(mpWindow, RGB(0x5,0x1,0x1), 255, LWA_ALPHA | LWA_COLORKEY);
     SetBkColor(dc, 0x1);
 
     ReleaseDC(mpWindow, dc);
@@ -101,7 +101,7 @@ void WiiCursorHandler::OnDisconnect()
 void WiiCursorHandler::WindowUpdate()
 {
     UpdateWindow(mpWindow);
-    //RedrawWindow(mpWindow, NULL, NULL, RDW_INVALIDATE);
+    RedrawWindow(mpWindow, NULL, NULL, RDW_INVALIDATE);
     MSG msg = { };
     if (PeekMessage(&msg, NULL, 0, 0, 3) > 0)
     {

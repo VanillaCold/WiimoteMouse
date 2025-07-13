@@ -9,6 +9,21 @@
 
 //Gdiplus::Rect 
 
+float angle = 0;
+
+Gdiplus::PointF RotateAboutPoint(float x, float y, float cx, float cy, float angle)
+{
+    /// 2D Rotation Matrix:
+    /// (cos T      sin T
+    ///  -sin T     cos T)
+    /// where T is the angle
+
+    float posX = (x - cx) * cos(angle) + (y - cy) * sin(angle);
+    float posY = -(x - cx) * sin(angle) + (y - cy) * cos(angle);
+
+    return Gdiplus::PointF(posX+cx, posY+cy);
+}
+
 
 LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -29,16 +44,32 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
         // All painting occurs here, between BeginPaint and EndPaint.
 
-        SetBkColor(hdc, RGB(0x1,0x1,0x1));
+        SetBkColor(hdc, RGB(0x5,0x1,0x1));
         SetBkMode(hdc, TRANSPARENT);
-        FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(0x01,0x01,0x01)));
+        FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(0x5,0x01,0x01)));
+
+        Gdiplus::PointF points[] =
+        {
+            Gdiplus::PointF(128.0f - 23.0f, 128.0f - 8.0f),
+            Gdiplus::PointF(128.0f - 23.0f + 64.0f, 128.0f - 8.0f),
+            Gdiplus::PointF(128.0f - 23.0f, 128.0f - 8.0f + 64.0f)
+        };
+
+        points[0] = RotateAboutPoint(points[0].X, points[0].Y, 128.0f, 128.0f, angle);
+        points[1] = RotateAboutPoint(points[1].X, points[1].Y, 128.0f, 128.0f, angle);
+        points[2] = RotateAboutPoint(points[2].X, points[2].Y, 128.0f, 128.0f, angle);
+        
 
         Gdiplus::Graphics gf(hdc);
 
+        gf.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
+
+
         Gdiplus::Bitmap myImage(L"MainCursor.png");
 
-        gf.DrawImage(&myImage, 128-23, 128-8, 64, 64);
+        gf.DrawImage(&myImage, points, 3);//128-23, 128-8, 64, 64);
 
+        angle += 0.01;
 
         EndPaint(hwnd, &ps);
     }
