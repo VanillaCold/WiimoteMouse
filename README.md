@@ -3,14 +3,16 @@
 WiimoteMouse is a program, built on the [Wiiuse library](https://github.com/wiiuse/wiiuse), to use a Wii Remote's IR sensor as a means to control the cursor in Windows.
 Although there isn't much practical use for this on regular desktop Windows, there is potential merit for it as a way to control a computer from afar - for home-theatre PCs, for instance.
 
-Right now, only basic mouse usage is implemented - moving the cursor, left clicking with the A button, and right-clicking with B.
+### Implemented Features
+- Left, right and middle mouse buttons, mapped to A, B and 1 respectively.
+- Scrolling, using up and down on the directional pad.
+- IR cursor pointing, with rudimentary stabilization
+- A custom Wii Remote cursor that rotates with the remote, as in the Wii Menu
 
-### Planned Features:
-- Scrolling, likely using either the directional pad or, optionally, Wii Nunchucks.
-- The ability to middle-click
-- Some way to disconnect a controller, so that it can be used for other programs such as Dolphin.
-- Screen calibration & saving/loading
-- A Wii Remote cursor sprite - one which would rotate with the remote itself.
+### Planned Features
+- A settings menu, styled after the Wii's Home Menu and accessed by pressing the Home button
+- Screen calibration settings
+- An option to use the regular Windows cursor instead of the Wii Remote cursor
 
 ### Features that I want to add at some point but am unsure how:
 - Improved cursor stabilization using Wii Motion Plus.
