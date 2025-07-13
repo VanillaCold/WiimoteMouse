@@ -181,6 +181,9 @@
     <ResourceCompile Include="WiimoteMouse.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="icon.ico">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="MainCursor.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
