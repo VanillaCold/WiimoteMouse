@@ -1,6 +1,12 @@
 # Wiimote Mouse
 
-WiimoteMouse is a program, built on the [Wiiuse library](https://github.com/wiiuse/wiiuse), to use a Wii Remote's IR sensor as a means to control the cursor in Windows.
+<img width="1754" height="881" alt="wiimote mouse logo" src="https://github.com/user-attachments/assets/5b8e3466-a1f2-41cb-9630-8702cc1e253b" />
+(logo art by VanillaCold)
+
+
+-----
+
+WiimoteMouse is a program built on the [Wiiuse library](https://github.com/wiiuse/wiiuse) to use a Wii Remote's IR sensor as a means to control the cursor in Windows.
 Although there isn't much practical use for this on regular desktop Windows, there is potential merit for it as a way to control a computer from afar - for home-theatre PCs, for instance.
 
 ### Implemented Features
