@@ -1,4 +1,7 @@
+#define OEMRESOURCE
 #include "WiiCursorHandler.h";
+
+
 #include <Windows.h>
 
 
@@ -44,10 +47,55 @@ void WiiCursorHandler::OnConnect()
     SetWindowPos(mpWindow, nullptr, 0, 0, 256, 256, 0);
 
 
+    HCURSOR cursor = LoadCursorFromFile(L"cursor1.cur");//CreateCursor(NULL, 0, 0, 1, 1, new BYTE (0), new BYTE (1));
+    
+
+    //Need to copy the cursor each time as SetSystemCursor consumes the cursor
+    HCURSOR cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_APPSTARTING);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_NORMAL);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_CROSS);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_HAND);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_IBEAM);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_NO);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_SIZEALL);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_SIZENESW);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_SIZENS);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_SIZENWSE);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_SIZEWE);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_UP);
+
+    cursorCopy = CopyCursor(cursor);
+    SetSystemCursor(cursorCopy, OCR_WAIT);
+
 }
 
 void WiiCursorHandler::OnDisconnect()
 {
+    DestroyWindow(mpWindow);
+    SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
 }
 
 void WiiCursorHandler::WindowUpdate()

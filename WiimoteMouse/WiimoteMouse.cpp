@@ -407,6 +407,7 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 				mpCursorHandle->WindowUpdate();
 			}
 		}
+		mpCursorHandle->OnDisconnect();
 		//Sleep(50);
 
 	}

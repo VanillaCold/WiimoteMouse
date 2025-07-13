@@ -1,19 +1,24 @@
 
+#define OEMRESOURCE
 #include <Windows.h>;
 #include "WiimoteMouse.h";
 #include "WiiCursorHandler.h";
 #include <gdiplus.h>;
 #include <wingdi.h>;
+#include <windows.media.ocr.h>
+
+//Gdiplus::Rect 
 
 
 LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    ShowCursor(false);
+
 
     switch (uMsg)
     {
 
     case WM_DESTROY:
+        SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
         PostQuitMessage(0);
         return 0;
 
@@ -44,8 +49,15 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
+void dispose()
+{
+    SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
+}
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
+    SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
+    std::atexit(dispose);
     ULONG_PTR m_token = 0;
     Gdiplus::GdiplusStartupInput startupInput;
     Gdiplus::GdiplusStartup(&m_token, &startupInput, NULL);
@@ -69,3 +81,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     if (m_token)
         Gdiplus::GdiplusShutdown(m_token);
 }
+
+
+
