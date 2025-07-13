@@ -7,6 +7,9 @@
 #include <Windows.h>
 #include <thread>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include "WiimoteMouse.h"
 
 
@@ -32,7 +35,7 @@ void WiimoteMouse::ToggleIR(wiimote_t* mote)
 }
 
 
-void WiimoteMouse::MoveMouse(int x, int y)
+void WiimoteMouse::MoveMouse(int x, int y, float angle)
 {
 	printf("%i, %i, \n", x, y);
 
@@ -89,9 +92,10 @@ void WiimoteMouse::MoveMouse(int x, int y)
 
 		// lastly, set the cursor position using the Windows API.
 		SetCursorPos(newx, newy);
-		mpCursorHandle->UpdatePosition(newx, newy, 0);
+		mpCursorHandle->UpdatePosition(newx, newy, angle);
 
 		while (ShowCursor(false) >= 0);
+
 	}
 }
 
@@ -112,13 +116,15 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 		int validSources = 0;
 
+		printf("sources are: ");
+
 		// In this case, we're only interested in the first two sensors,
 		// as dealing with errors in the other two could result in some wonky shenanigans.
 		for (int i = 0; i < 4; ++i) {
 			if (remote->ir.dot[i].visible) {
 
-				
-				
+
+
 				//HDC screenDC = ::GetDC(0);
 				//::Rectangle(screenDC, remote->ir.dot[i].x-1, remote->ir.dot[i].y-1, remote->ir.dot[i].x+1, remote->ir.dot[i].y+1);
 				//::ReleaseDC(0, screenDC);
@@ -128,9 +134,30 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 				meanX += remote->ir.dot[i].x;
 				meanY += remote->ir.dot[i].y;
 				validSources++;
+
+				printf("%u, %u, ", remote->ir.dot[i].x, remote->ir.dot[i].y);
 				//}
 			}
 		}
+		printf("\n");
+		float angle = 0;
+
+		if (remote->ir.dot[0].visible && remote->ir.dot[1].visible)
+		{
+			int dx = int(remote->ir.dot[1].x) - int(remote->ir.dot[0].x);
+			int dy = int(remote->ir.dot[1].y) - int(remote->ir.dot[0].y);
+
+			printf("point diff is %u, %u, \n", dx, dy);
+			
+			angle = atan2f(dy, dx);
+
+			printf("angle is %f\n", angle);
+
+			//string.sprintf("%f", angle);
+		}
+		//M_PI_4
+
+		
 
 
 		//printf("IR cursor: (%u, %u)\n", remote->ir.x, remote->ir.y);
@@ -143,7 +170,7 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 			// Move to the mean  cursor position - the average of the two sources.
 			
-			MoveMouse(remote->ir.x, remote->ir.y);
+			MoveMouse(remote->ir.x, remote->ir.y, angle);
 
 			//MoveMouse(meanX / validSources, meanY / validSources);
 		};

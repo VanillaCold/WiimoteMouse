@@ -9,7 +9,7 @@
 
 //Gdiplus::Rect 
 
-float angle = 0;
+WiiCursorHandler* cursorHandler;
 
 Gdiplus::PointF RotateAboutPoint(float x, float y, float cx, float cy, float angle)
 {
@@ -39,6 +39,7 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
     case WM_PAINT:
     {
+        float angle = cursorHandler->angle;
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hwnd, &ps);
 
@@ -69,8 +70,6 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
         gf.DrawImage(&myImage, points, 3);//128-23, 128-8, 64, 64);
 
-        angle += 0.01;
-
         EndPaint(hwnd, &ps);
     }
 
@@ -87,6 +86,17 @@ void dispose()
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
+
+
+
+    /*FILE* fp;
+
+    AllocConsole();
+    freopen_s(&fp, "CONIN$", "r", stdin);
+    freopen_s(&fp, "CONOUT$", "w", stdout);
+    freopen_s(&fp, "CONOUT$", "w", stderr);
+    */
+
     SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
     std::atexit(dispose);
     ULONG_PTR m_token = 0;
@@ -106,6 +116,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	auto mouse = new WiimoteMouse();
 	auto cursor = new WiiCursorHandler(hInstance);
+
+    cursorHandler = cursor;
+
 	mouse->MainLoop(cursor);
 
 

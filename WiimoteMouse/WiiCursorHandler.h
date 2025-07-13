@@ -19,5 +19,7 @@ public:
 	void UpdatePosition(int x, int y, float angle);
 	HWND mpWindow;
 	HINSTANCE mpHInstance;
+
+	float angle;
 	
 };

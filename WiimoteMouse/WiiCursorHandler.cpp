@@ -8,6 +8,7 @@
 
 WiiCursorHandler::WiiCursorHandler(HINSTANCE pInstance)
 {
+    angle = 0;
     mpHInstance = pInstance;
 }
 
@@ -117,4 +118,5 @@ void WiiCursorHandler::UpdatePosition(int x, int y, float angle)
     SetCapture(mpWindow);
     ShowCursor(false);
     SetWindowPos(mpWindow, nullptr, x-128, y-128, 256, 256, 0);
+    this->angle = angle;
 }

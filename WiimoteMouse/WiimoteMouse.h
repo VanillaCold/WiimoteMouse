@@ -14,7 +14,7 @@ public:
 	int MainLoop(WiiCursorHandler* pCursorHandler);
 
 	void HandleEvent(wiimote* remote);
-	void MoveMouse(int x, int y);
+	void MoveMouse(int x, int y, float angle = 0);
 
 	WiiCursorHandler* mpCursorHandle;
 };
