@@ -11,20 +11,6 @@
 
 WiiCursorHandler* cursorHandler;
 
-Gdiplus::PointF RotateAboutPoint(float x, float y, float cx, float cy, float angle)
-{
-    /// 2D Rotation Matrix:
-    /// (cos T      sin T
-    ///  -sin T     cos T)
-    /// where T is the angle
-
-    float posX = (x - cx) * cos(angle) + (y - cy) * sin(angle);
-    float posY = -(x - cx) * sin(angle) + (y - cy) * cos(angle);
-
-    return Gdiplus::PointF(posX+cx, posY+cy);
-}
-
-
 LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
@@ -56,9 +42,18 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
             Gdiplus::PointF(128.0f - 23.0f, 128.0f - 8.0f + 64.0f)
         };
 
-        points[0] = RotateAboutPoint(points[0].X, points[0].Y, 128.0f, 128.0f, angle);
-        points[1] = RotateAboutPoint(points[1].X, points[1].Y, 128.0f, 128.0f, angle);
-        points[2] = RotateAboutPoint(points[2].X, points[2].Y, 128.0f, 128.0f, angle);
+
+        auto p1 = WiiCursorHandler::RotateAboutPoint(points[0].X, points[0].Y, 128.0f, 128.0f, angle);
+        points[0].X = p1.first;
+        points[0].Y = p1.second;
+
+        auto p2 = WiiCursorHandler::RotateAboutPoint(points[1].X, points[1].Y, 128.0f, 128.0f, angle);
+        points[1].X = p2.first;
+        points[1].Y = p2.second;
+
+        auto p3 = WiiCursorHandler::RotateAboutPoint(points[2].X, points[2].Y, 128.0f, 128.0f, angle);
+        points[2].X = p3.first;
+        points[2].Y = p3.second;
         
 
         Gdiplus::Graphics gf(hdc);
@@ -89,13 +84,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 
 
-    /*FILE* fp;
+    FILE* fp;
 
     AllocConsole();
     freopen_s(&fp, "CONIN$", "r", stdin);
     freopen_s(&fp, "CONOUT$", "w", stdout);
     freopen_s(&fp, "CONOUT$", "w", stderr);
-    */
+    
 
     SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
     std::atexit(dispose);

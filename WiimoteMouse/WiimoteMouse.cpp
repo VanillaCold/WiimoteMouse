@@ -156,8 +156,15 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 			//string.sprintf("%f", angle);
 		}
 		//M_PI_4
+		auto xPoint = remote->ir.x;
+		auto yPoint = remote->ir.y;
 
-		
+		if (angle != 0)
+		{
+			auto point = WiiCursorHandler::RotateAboutPoint(remote->ir.x, remote->ir.y, remote->ir.vres[0] / 2, remote->ir.vres[1] / 2, angle);
+			xPoint = point.first;
+			yPoint = point.second;
+		}
 
 
 		//printf("IR cursor: (%u, %u)\n", remote->ir.x, remote->ir.y);
@@ -170,7 +177,7 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 			// Move to the mean  cursor position - the average of the two sources.
 			
-			MoveMouse(remote->ir.x, remote->ir.y, angle);
+			MoveMouse(xPoint, yPoint, angle);
 
 			//MoveMouse(meanX / validSources, meanY / validSources);
 		};
@@ -342,15 +349,17 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 
 	auto width = GetSystemMetrics(SM_CXSCREEN);
 	auto height = GetSystemMetrics(SM_CYSCREEN);
+
+	bool lowBatteryAlert = false;
+	//main stuff!
+	//std::cout << "Hello World!\n";
+
+	// A lot of the connection code is, admittedly, based heavily on the example project
+	// this starts out just initialising one single wii remote, as we only want one.
+	wiimote_t** mote = wiiuse_init(1);
+
 	while (true)
 	{
-		bool lowBatteryAlert = false;
-		//main stuff!
-		//std::cout << "Hello World!\n";
-
-		// A lot of the connection code is, admittedly, based heavily on the example project
-		// this starts out just initialising one single wii remote, as we only want one.
-		wiimote_t** mote = wiiuse_init(1);
 
 		// Find up to one wiimote with a 5 second timeout.
 		int found = wiiuse_find(mote, 1, 5);

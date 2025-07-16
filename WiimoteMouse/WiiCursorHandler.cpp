@@ -3,7 +3,7 @@
 
 
 #include <Windows.h>
-
+#include <math.h>
 
 
 WiiCursorHandler::WiiCursorHandler(HINSTANCE pInstance)
@@ -119,4 +119,17 @@ void WiiCursorHandler::UpdatePosition(int x, int y, float angle)
     ShowCursor(false);
     SetWindowPos(mpWindow, nullptr, x-128, y-128, 256, 256, 0);
     this->angle = angle;
+}
+
+std::pair<float, float> WiiCursorHandler::RotateAboutPoint(float x, float y, float cx, float cy, float angle)
+{
+    /// 2D Rotation Matrix:
+    /// (cos T      sin T
+    ///  -sin T     cos T)
+    /// where T is the angle
+
+    float posX = (x - cx) * cos(angle) + (y - cy) * sin(angle);
+    float posY = -(x - cx) * sin(angle) + (y - cy) * cos(angle);
+
+    return std::pair<float, float>(posX + cx, posY + cy);
 }
