@@ -10,6 +10,8 @@
 //Gdiplus::Rect 
 
 WiiCursorHandler* cursorHandler;
+Gdiplus::Bitmap* cursorImage;
+HBRUSH colBrush;
 
 LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -21,7 +23,7 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
     case WM_DESTROY:
         SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
         PostQuitMessage(0);
-        return 0;
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
     case WM_PAINT:
     {
@@ -31,9 +33,9 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
         // All painting occurs here, between BeginPaint and EndPaint.
 
-        SetBkColor(hdc, RGB(0x5,0x1,0x1));
-        SetBkMode(hdc, TRANSPARENT);
-        FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(0x5,0x01,0x01)));
+        //SetBkColor(hdc, RGB(0x5,0x1,0x1));
+        //SetBkMode(hdc, TRANSPARENT);
+        FillRect(hdc, &ps.rcPaint, colBrush);
 
         Gdiplus::PointF points[] =
         {
@@ -61,14 +63,14 @@ LRESULT CALLBACK WiiCursorWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
         gf.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
 
 
-        Gdiplus::Bitmap myImage(L"MainCursor.png");
 
-        gf.DrawImage(&myImage, points, 3);//128-23, 128-8, 64, 64);
+        gf.DrawImage(cursorImage, points, 3);//128-23, 128-8, 64, 64);
+
 
         EndPaint(hwnd, &ps);
     }
 
-    return 0;
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -81,8 +83,6 @@ void dispose()
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
-
-
 
     FILE* fp;
 
@@ -97,6 +97,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     ULONG_PTR m_token = 0;
     Gdiplus::GdiplusStartupInput startupInput;
     Gdiplus::GdiplusStartup(&m_token, &startupInput, NULL);
+
+
+    Gdiplus::Bitmap img(L"MainCursor.png");
+    cursorImage = &img;
+
+    colBrush = CreateSolidBrush(RGB(0x5, 0x01, 0x01));
     
     
     const wchar_t CLASS_NAME[] = L"WiiCursorWinProc";

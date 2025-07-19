@@ -10,6 +10,7 @@ WiiCursorHandler::WiiCursorHandler(HINSTANCE pInstance)
 {
     angle = 0;
     mpHInstance = pInstance;
+    customCursor = LoadCursorFromFile(L"cursor1.cur");
 }
 
 void WiiCursorHandler::OnConnect()
@@ -48,47 +49,47 @@ void WiiCursorHandler::OnConnect()
     SetWindowPos(mpWindow, nullptr, 0, 0, 256, 256, 0);
 
 
-    HCURSOR cursor = LoadCursorFromFile(L"cursor1.cur");//CreateCursor(NULL, 0, 0, 1, 1, new BYTE (0), new BYTE (1));
+    //CreateCursor(NULL, 0, 0, 1, 1, new BYTE (0), new BYTE (1));
     
 
     //Need to copy the cursor each time as SetSystemCursor consumes the cursor
-    HCURSOR cursorCopy = CopyCursor(cursor);
+    HCURSOR cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_APPSTARTING);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_NORMAL);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_CROSS);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_HAND);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_IBEAM);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_NO);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_SIZEALL);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_SIZENESW);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_SIZENS);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_SIZENWSE);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_SIZEWE);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_UP);
 
-    cursorCopy = CopyCursor(cursor);
+    cursorCopy = CopyCursor(customCursor);
     SetSystemCursor(cursorCopy, OCR_WAIT);
 
 

@@ -466,14 +466,14 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 			}
 
 			std::chrono::milliseconds timeSpent = duration_cast<milliseconds>(steady_clock::now() - start);
-			if (timeSpent.count() >= 1)
+			if (timeSpent.count() >= 33)
 			{
 				start = std::chrono::steady_clock::now();
 				mpCursorHandle->WindowUpdate();
 			}
 		}
 		mpCursorHandle->OnDisconnect();
-
+		Sleep(1);
 	}
 	
     

@@ -23,6 +23,8 @@ public:
 	HWND mpWindow;
 	HINSTANCE mpHInstance;
 
+	HCURSOR customCursor;
+
 	float angle;
 
 
