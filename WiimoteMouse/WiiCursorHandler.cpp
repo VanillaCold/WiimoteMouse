@@ -91,6 +91,7 @@ void WiiCursorHandler::OnConnect()
     cursorCopy = CopyCursor(cursor);
     SetSystemCursor(cursorCopy, OCR_WAIT);
 
+
 }
 
 void WiiCursorHandler::OnDisconnect()
@@ -101,14 +102,17 @@ void WiiCursorHandler::OnDisconnect()
 
 void WiiCursorHandler::WindowUpdate()
 {
-    UpdateWindow(mpWindow);
-    RedrawWindow(mpWindow, NULL, NULL, RDW_INVALIDATE);
+    RedrawWindow(mpWindow, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+    
+    // we really, really want to encounter a lot of messages-
     MSG msg = { };
-    if (PeekMessage(&msg, NULL, 0, 0, 3) > 0)
+    for (int i = 0; i < 5; i++)
     {
-        TranslateMessage(&msg);
-
-        DispatchMessage(&msg);
+        if (PeekMessage(&msg, NULL, 0, 0, 6) > 0)
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
     }
 
 }
