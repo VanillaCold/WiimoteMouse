@@ -51,6 +51,10 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 
 	// I do plan on making all this customisable. The base values shouldn't need to be changed, I think, but the buffer will need to be malleable.
 	
+	targetX = x;
+	targetY = y;
+	currentAngle = angle;
+
 	float normX = ((x-40) / 470.0f);
 	float normY = (y-20) / 380.0f;
 
@@ -93,8 +97,6 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 		// lastly, set the cursor position using the Windows API.
 		SetCursorPos(newx, newy);
 		mpCursorHandle->UpdatePosition(newx, newy, angle);
-
-		while (ShowCursor(false) >= 0);
 
 	}
 }
@@ -468,9 +470,11 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 			std::chrono::milliseconds timeSpent = duration_cast<milliseconds>(steady_clock::now() - start);
 			if (timeSpent.count() >= 33)
 			{
+				//printf("%i ms", timeSpent.count());
 				start = std::chrono::steady_clock::now();
 				mpCursorHandle->WindowUpdate();
 			}
+			MoveMouse(targetX, targetY, currentAngle);
 		}
 		mpCursorHandle->OnDisconnect();
 		Sleep(1);

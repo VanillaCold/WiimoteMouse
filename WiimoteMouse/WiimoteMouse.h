@@ -17,4 +17,7 @@ public:
 	void MoveMouse(int x, int y, float angle = 0);
 
 	WiiCursorHandler* mpCursorHandle;
+	int targetX;
+	int targetY;
+	float currentAngle;
 };

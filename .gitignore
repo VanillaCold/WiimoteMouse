@@ -4,3 +4,5 @@ Debug/*
 /.vs
 /WiimoteMouse/Debug
 /x64
+/WiimoteMouse/Release/WiimoteMouse.tlog
+/WiimoteMouse/Release/WiimoteMouse.log
