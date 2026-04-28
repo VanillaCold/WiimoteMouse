@@ -6,3 +6,11 @@ Debug/*
 /x64
 /WiimoteMouse/Release/WiimoteMouse.tlog
 /WiimoteMouse/Release/WiimoteMouse.log
+WiimoteMouse-Linux/wiimotemouse-linux
+WiimoteMouse-Linux/build/*
+WiimoteMouse-Linux/CMakeFiles/*
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+libwmm.so
+Makefile
