@@ -4,6 +4,14 @@
 #include <iostream>
 #include <wiiuse.h>
 
+
+
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_log.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_video.h>
+#include <SDL3/SDL_rect.h>
+
 //#include <Windows.h>
 //#include "WiiCursorHandler.h"
 
@@ -16,6 +24,8 @@ struct Point
 class WiimoteMouse
 {
 public:
+	WiimoteMouse();
+
 	void ToggleIR(wiimote_t* mote);
 	int MainLoop(int* pCursorHandler);
 
@@ -26,4 +36,9 @@ public:
 	int targetX;
 	int targetY;
 	float currentAngle;
+
+	int screenW;
+	int screenH;
+
+	bool allowUsage;
 };

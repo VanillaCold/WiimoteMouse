@@ -26,7 +26,23 @@ extern "C" {
 	int wiiuse_poll(wiimote_t**, int);
 }
 
-bool allowUsage = true;
+WiimoteMouse::WiimoteMouse()
+{
+	SDL_DisplayID display = SDL_GetPrimaryDisplay();
+	SDL_PropertiesID displayProperties = SDL_GetDisplayProperties(display);
+	const SDL_DisplayMode *DM = SDL_GetDesktopDisplayMode(display);
+	int w = DM->w * DM->pixel_density;
+	int h = DM->h * DM->pixel_density;
+	std::cout << w << " " << h << "\n";
+
+	screenW = w;
+	screenH = h;
+
+	targetX = 0;
+	targetY = 0;
+	currentAngle = 0;
+	allowUsage = true;
+}
 
 void WiimoteMouse::ToggleIR(wiimote_t* mote)
 {
@@ -65,23 +81,29 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 	//printf("%f, %f, \n", normX, normY);
 
 	// get the screen height & width.
-	auto width = 2560; //TODO; width GetSystemMetrics(SM_CXSCREEN);
-	auto height = 1440;//TODO; height GetSystemMetrics(SM_CYSCREEN);
 
 	// Multiply the position by these - ideally, this will map 1:1 with screen coordinates.
-	normX *= width;
-	normY *= height;
+	normX *= screenW;
+	normY *= screenH;
 
 	// make sure the X and Y don't exceed the screen resolution, and that they aren't negative.
 	//normX = max(min(width, normX), 0);
 	//normY = max(min(height, normY), 0);
 
-	std::cout << normX << " " << normY << " nyaaaa\n";
+	std::cout << normX << " " << normY << " nyaaaa \n";
+
+	//float mouseX = 0;
+	//float mouseY = 0;
+
+	//SDL_SetWindowRelativeMouseMode()
+	//SDL_GetGlobalMouseState(&mouseX, &mouseY);
+
+	//std::cout << mouseX << " " << mouseY << " nya :>\n";
 	
 	//Point point;
 	
 	// Smooth out smaller movements
-	// TODO: figure out how to get cursor pos.
+	// TODO: figure out how to get cursor pos, and how to SET it.
 
 	/*if (GetCursorPos(&point))
 	{
@@ -425,13 +447,13 @@ int WiimoteMouse::MainLoop(int* pCursorHandler)
 				// just in case it's still connected, clean some stuff up.
 				wiiuse_set_leds(mote[0], WIIMOTE_LED_NONE);
 				
-				sleep(50);
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
 				// disconnect formally.
 				wiiuse_disconnect(mote[0]);
 				wiiuse_disconnected(mote[0]);
 
-				sleep(50);
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
 				// and now clean up the entire thing,
 				// this is so that we can reconnect later.

@@ -3,6 +3,12 @@
 //#include <Windows.h>;
 #include <iostream>
 #include "WiimoteMouse.h"
+
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_log.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_video.h>
+#include <SDL3/SDL_rect.h>
 //#include "WiiCursorHandler.h"
 //#include <gdiplus.h>;
 //#include <wingdi.h>;
@@ -132,6 +138,24 @@ void dispose()
 
 
 int main(int argc, char **argv) {
+
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+        return 0;
+    }
+    /*SDL_Window* win = SDL_CreateWindow("SDL3 Image",640, 480, 0);
+    SDL_Renderer* ren = SDL_CreateRenderer(win, NULL);
+    SDL_Surface* bmp = SDL_LoadPNG("MainCursor.png");
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(ren, bmp);
+    SDL_DestroySurface(bmp);
+
+    SDL_Event e;
+
+    SDL_RenderClear(ren);
+    SDL_RenderTexture(ren, tex, NULL, NULL);
+    SDL_RenderPresent(ren);*/
+
+
     auto mouse = new WiimoteMouse();
     mouse->MainLoop(nullptr);
 }
