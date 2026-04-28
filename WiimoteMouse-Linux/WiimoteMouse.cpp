@@ -92,40 +92,29 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 
 	std::cout << normX << " " << normY << " nyaaaa \n";
 
-	//float mouseX = 0;
-	//float mouseY = 0;
+	// first get the differences in cursor position
+	float diffX = mCurrentCursorX - normX;
+	float diffY = mCurrentCursorY - normY;
 
-	//SDL_SetWindowRelativeMouseMode()
-	//SDL_GetGlobalMouseState(&mouseX, &mouseY);
-
-	//std::cout << mouseX << " " << mouseY << " nya :>\n";
-	
-	//Point point;
-	
-	// Smooth out smaller movements
-	// TODO: figure out how to get cursor pos, and how to SET it.
-
-	/*if (GetCursorPos(&point))
-	{
-		// first get the differences in cursor position
-		float diffX = point.x - normX;
-		float diffY = point.y - normY;
-
-		// Multiply the difference by its square root, and divide by the sqrt of the screen size.
-		// this smooths out the position, at the cost of being less responsive.
-		// might be possible to use the motion+ gyroscope to better smooth it out? but idk.
-		diffX *= sqrt(abs(diffX)) / sqrt(width);
-		diffY *= sqrt(abs(diffY)) / sqrt(height);
+	// Multiply the difference by its square root, and divide by the sqrt of the screen size.
+	// this smooths out the position, at the cost of being less responsive.
+	// might be possible to use the motion+ gyroscope to better smooth it out? but idk.
+	diffX *= sqrt(abs(diffX)) / sqrt(screenW);
+	diffY *= sqrt(abs(diffY)) / sqrt(screenH);
 		
-		// Subtract the new smoothed difference in coordinates.
-		int newx = point.x - diffX;
-		int newy = point.y - diffY;
+	// Subtract the new smoothed difference in coordinates.
+	float newx = mCurrentCursorX - diffX;
+	float newy = mCurrentCursorY - diffY;
 
-		// lastly, set the cursor position using the Windows API.
-		SetCursorPos(newx, newy);
-		mpCursorHandle->UpdatePosition(newx, newy, angle);
+	// lastly, set the cursor position using the Windows API.
+	//SetCursorPos(newx, newy);
+	//mpCursorHandle->UpdatePosition(newx, newy, angle);
 
-	}*/
+	mCurrentCursorX = newx;
+	mCurrentCursorY = newy;
+
+	std::cout << newx << " " << newy << " nyaaaa \n";
+
 }
 
 void WiimoteMouse::HandleEvent(wiimote* remote)

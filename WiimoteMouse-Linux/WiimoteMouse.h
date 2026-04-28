@@ -41,4 +41,7 @@ public:
 	int screenH;
 
 	bool allowUsage;
+
+	float mCurrentCursorX;
+	float mCurrentCursorY;
 };
