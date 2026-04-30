@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    SDL_Window* win = SDL_CreateWindow("SDL3 Image",512, 512, SDL_WINDOW_BORDERLESS | SDL_WINDOW_TRANSPARENT | SDL_WINDOW_NOT_FOCUSABLE | SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_UTILITY );
+    SDL_Window* win = SDL_CreateWindow("SDL3 Image",512, 512, SDL_WINDOW_BORDERLESS | SDL_WINDOW_TRANSPARENT | SDL_WINDOW_NOT_FOCUSABLE | SDL_WINDOW_ALWAYS_ON_TOP );
     SDL_Renderer* ren = SDL_CreateRenderer(win, NULL);
     SDL_Surface* bmp = SDL_LoadPNG("MainCursor.png");
     SDL_Texture* tex = SDL_CreateTextureFromSurface(ren, bmp);

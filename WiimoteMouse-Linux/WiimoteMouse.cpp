@@ -113,8 +113,8 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 	// Multiply the difference by its square root, and divide by the sqrt of the screen size.
 	// this smooths out the position, at the cost of being less responsive.
 	// might be possible to use the motion+ gyroscope to better smooth it out? but idk.
-	diffX *= sqrt(abs(diffX)) / sqrt(screenW);
-	diffY *= sqrt(abs(diffY)) / sqrt(screenH);
+	diffX *= (abs(diffX)) / (screenW);
+	diffY *= (abs(diffY)) / (screenH);
 		
 	// Subtract the new smoothed difference in coordinates.
 	float newx = mCurrentCursorX - diffX;
@@ -238,6 +238,9 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 
 			SendInput(1, &input, sizeof(INPUT));*/
+
+			mMouse.press(inputtino::Mouse::MOUSE_BUTTON::LEFT);
+			std::this_thread::sleep_for(std::chrono::microseconds(10));
 			std::cout << "A button pressed\n";
 		}
 
@@ -253,6 +256,8 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 
 			SendInput(1, &input, sizeof(INPUT));*/
+			mMouse.press(inputtino::Mouse::MOUSE_BUTTON::RIGHT);
+			std::this_thread::sleep_for(std::chrono::microseconds(10));
 			std::cout << "B button pressed\n";
 		}
 
@@ -269,6 +274,8 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 			SendInput(1, &input, sizeof(INPUT));*/
 			// TODO: pleaes clean this code up. like a lot.
+			mMouse.press(inputtino::Mouse::MOUSE_BUTTON::MIDDLE);
+			std::this_thread::sleep_for(std::chrono::microseconds(10));
 			std::cout << "1 button pressed\n";
 		}
 
@@ -284,6 +291,7 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 			SendInput(1, &input, sizeof(INPUT));*/
 			// TODO: stuff
+			mMouse.release(inputtino::Mouse::MOUSE_BUTTON::RIGHT);
 
 			std::cout << "B button rel\n";
 		}
@@ -299,6 +307,7 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 			SendInput(1, &input, sizeof(INPUT));*/
 			// TODO: release A
+			mMouse.release(inputtino::Mouse::MOUSE_BUTTON::LEFT);
 
 			std::cout << "A button rel\n";
 		}
@@ -314,40 +323,10 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 			SendInput(1, &input, sizeof(INPUT));*/
 			//TODO: 1 button rel
+			mMouse.release(inputtino::Mouse::MOUSE_BUTTON::MIDDLE);
 
 			std::cout << "1 button rel\n";
 		}
-
-		//TODO: scrolling
-
-		/*if (IS_PRESSED(remote, WIIMOTE_BUTTON_UP))
-		{
-
-			// Use the Windows API to set up and send a right release
-			INPUT input;
-			input.type = INPUT_MOUSE;
-			input.mi = MOUSEINPUT();
-			input.mi.time = 0;
-			input.mi.dwFlags = MOUSEEVENTF_WHEEL;
-			input.mi.mouseData = 20;
-
-			SendInput(1, &input, sizeof(INPUT));
-		}
-
-		if (IS_PRESSED(remote, WIIMOTE_BUTTON_DOWN))
-		{
-
-			// Use the Windows API to set up and send a right release
-			INPUT input;
-			input.type = INPUT_MOUSE;
-			input.mi = MOUSEINPUT();
-			input.mi.time = 0;
-			input.mi.dwFlags = MOUSEEVENTF_WHEEL;
-			input.mi.mouseData = -20;
-
-			SendInput(1, &input, sizeof(INPUT));
-		}*/
-
 
 	}
 
@@ -449,8 +428,17 @@ int WiimoteMouse::MainLoop(int* pCursorHandler)
 				default:
 					break;
 				}
-			
 
+			}
+			//TODO: scrolling
+			if (IS_PRESSED(mote[0], WIIMOTE_BUTTON_UP))
+			{
+				mMouse.vertical_scroll(20);
+			}
+
+			if (IS_PRESSED(mote[0], WIIMOTE_BUTTON_DOWN))
+			{
+				mMouse.vertical_scroll(-20);
 			}
 
 			seconds timeout = duration_cast<seconds>(steady_clock::now() - timeoutStart);
