@@ -25,9 +25,16 @@ Although there isn't much practical use for this on regular desktop Windows, the
 - Cross-platform support
 
 ### How to build:
+
+#### Windows
 I haven't fully tested all build configurations - right now I primarily just build via Release, as I know this works.
 
 To begin, you will need to have Wiiuse downloaded and located at `../../wiiuse/`, relative to the repository.
 CMake should then be used to create a Visual Studio 2019/2022 solution out of the library, and then it should be built as Release.
 
 From there, open the solution for Wiimote Mouse and build it. It *should* work - key word is *should*, as I haven't tested this on any machine but my own.
+
+#### Linux
+
+On Linux, SDL3 and Wiiuse, and their development files, must be installed locally. Use CMake to create the makefile, and then just run make.
+It'll output to wiimotemouse-linux in the WiimoteMouse-Linux subfolder.
