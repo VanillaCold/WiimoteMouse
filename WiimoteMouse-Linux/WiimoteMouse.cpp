@@ -210,8 +210,26 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 		//printf("IR z distance: %f\n", remote->ir.z);
 
 		// If there's a non-even or zero number of IR dots detected, we don't want to use the info to move the mouse.
-		if (validSources != 0)
+		if (validSources > 1)
 		{
+			if (validSources % 2 != 0)
+			{
+				uint minX = remote->ir.dot[0].x;
+				uint minY = remote->ir.dot[0].y;
+				uint maxX = remote->ir.dot[0].x;
+				uint maxY = remote->ir.dot[0].y;
+
+				for (int i = 0; i < validSources; i++)
+				{
+					minX = std::min(minX, remote->ir.dot[i].x);
+					maxX = std::max(maxX, remote->ir.dot[i].x);
+					minY = std::min(minY, remote->ir.dot[i].y);
+					maxY = std::max(maxY, remote->ir.dot[i].y);
+				}
+
+				xPoint = minX + maxX / 2;
+				yPoint = minY + maxY / 2;
+			}
 			//std::cout << "Mean cursor pos: " << meanX / validSources << " " << meanY / validSources << std::endl;
 
 			// Move to the mean  cursor position - the average of the two sources.
@@ -229,16 +247,6 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 		if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_A))
 		{
-			// Use the Windows API to set up and send a left click
-			/*INPUT input;
-			input.type = INPUT_MOUSE;
-			input.mi = MOUSEINPUT();
-			input.mi.time = 0;
-			input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-
-
-			SendInput(1, &input, sizeof(INPUT));*/
-
 			mMouse.press(inputtino::Mouse::MOUSE_BUTTON::LEFT);
 			std::this_thread::sleep_for(std::chrono::microseconds(10));
 			std::cout << "A button pressed\n";
@@ -247,15 +255,6 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 		if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_B))
 		{
-			// Use the Windows API to set up and send a right click
-			/*INPUT input;
-			input.type = INPUT_MOUSE;
-			input.mi = MOUSEINPUT();
-			input.mi.time = 0;
-			input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
-
-
-			SendInput(1, &input, sizeof(INPUT));*/
 			mMouse.press(inputtino::Mouse::MOUSE_BUTTON::RIGHT);
 			std::this_thread::sleep_for(std::chrono::microseconds(10));
 			std::cout << "B button pressed\n";
@@ -264,15 +263,6 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 		if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_ONE))
 		{
-			// Use the Windows API to set up and send a right click
-			/*INPUT input;
-			input.type = INPUT_MOUSE;
-			input.mi = MOUSEINPUT();
-			input.mi.time = 0;
-			input.mi.dwFlags = MOUSEEVENTF_MIDDLEDOWN;
-
-
-			SendInput(1, &input, sizeof(INPUT));*/
 			// TODO: pleaes clean this code up. like a lot.
 			mMouse.press(inputtino::Mouse::MOUSE_BUTTON::MIDDLE);
 			std::this_thread::sleep_for(std::chrono::microseconds(10));
@@ -281,15 +271,6 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 		if (IS_RELEASED(remote, WIIMOTE_BUTTON_B))
 		{
-			// Use the Windows API to set up and send a left release
-			/*INPUT input;
-			input.type = INPUT_MOUSE;
-			input.mi = MOUSEINPUT();
-			input.mi.time = 0;
-			input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
-
-
-			SendInput(1, &input, sizeof(INPUT));*/
 			// TODO: stuff
 			mMouse.release(inputtino::Mouse::MOUSE_BUTTON::RIGHT);
 
@@ -298,15 +279,6 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 		if (IS_RELEASED(remote, WIIMOTE_BUTTON_A))
 		{
-			// Use the Windows API to set up and send a right release
-			/*INPUT input;
-			input.type = INPUT_MOUSE;
-			input.mi = MOUSEINPUT();
-			input.mi.time = 0;
-			input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-
-			SendInput(1, &input, sizeof(INPUT));*/
-			// TODO: release A
 			mMouse.release(inputtino::Mouse::MOUSE_BUTTON::LEFT);
 
 			std::cout << "A button rel\n";
@@ -314,15 +286,6 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 		if (IS_RELEASED(remote, WIIMOTE_BUTTON_ONE))
 		{
-			// Use the Windows API to set up and send a right release
-			/*INPUT input;
-			input.type = INPUT_MOUSE;
-			input.mi = MOUSEINPUT();
-			input.mi.time = 0;
-			input.mi.dwFlags = MOUSEEVENTF_MIDDLEUP;
-
-			SendInput(1, &input, sizeof(INPUT));*/
-			//TODO: 1 button rel
 			mMouse.release(inputtino::Mouse::MOUSE_BUTTON::MIDDLE);
 
 			std::cout << "1 button rel\n";
@@ -433,12 +396,12 @@ int WiimoteMouse::MainLoop(int* pCursorHandler)
 			//TODO: scrolling
 			if (IS_PRESSED(mote[0], WIIMOTE_BUTTON_UP))
 			{
-				mMouse.vertical_scroll(20);
+				mMouse.vertical_scroll(1);
 			}
 
 			if (IS_PRESSED(mote[0], WIIMOTE_BUTTON_DOWN))
 			{
-				mMouse.vertical_scroll(-20);
+				mMouse.vertical_scroll(-1);
 			}
 
 			seconds timeout = duration_cast<seconds>(steady_clock::now() - timeoutStart);
