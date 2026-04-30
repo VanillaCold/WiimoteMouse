@@ -18,5 +18,16 @@ Runtime=Host System
 [Cppcheck]
 useSystemIncludes=true
 
+[CustomDefinesAndIncludes][ProjectPath0]
+Path=.
+parseAmbiguousAsCPP=true
+parserArguments=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c++20
+parserArgumentsC=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c17
+parserArgumentsCuda=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c++20
+parserArgumentsOpenCL=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -cl-std=CL1.1
+
+[CustomDefinesAndIncludes][ProjectPath0][Compiler]
+Name=Clang
+
 [Project]
 VersionControlSupport=

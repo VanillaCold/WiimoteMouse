@@ -12,6 +12,9 @@
 #include <SDL3/SDL_video.h>
 #include <SDL3/SDL_rect.h>
 
+
+#include <inputtino/input.hpp>
+
 //#include <Windows.h>
 //#include "WiiCursorHandler.h"
 
@@ -39,9 +42,15 @@ public:
 
 	int screenW;
 	int screenH;
+	float screenDensity;
+	SDL_Rect coordinates;
 
 	bool allowUsage;
 
 	float mCurrentCursorX;
 	float mCurrentCursorY;
+
+	static inputtino::Mouse mMouse;
+
+
 };

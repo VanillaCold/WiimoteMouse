@@ -7,10 +7,10 @@
 //#include <Windows.h>
 #include <thread>
 #include <unistd.h>
-#include <linux/uinput.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+
 
 #include "WiimoteMouse.h"
 
@@ -26,22 +26,36 @@ extern "C" {
 	int wiiuse_poll(wiimote_t**, int);
 }
 
+inputtino::Mouse WiimoteMouse::mMouse = std::move(*inputtino::Mouse::create());
+
+
 WiimoteMouse::WiimoteMouse()
 {
 	SDL_DisplayID display = SDL_GetPrimaryDisplay();
 	SDL_PropertiesID displayProperties = SDL_GetDisplayProperties(display);
 	const SDL_DisplayMode *DM = SDL_GetDesktopDisplayMode(display);
+
+	SDL_Rect coordinates;
+	SDL_GetDisplayBounds(display, &coordinates);
+
+	std::cout << coordinates.x << " " << coordinates.y << std::endl;
+	std::cout << coordinates.w << " " << coordinates.h << std::endl;
+
+
 	int w = DM->w * DM->pixel_density;
 	int h = DM->h * DM->pixel_density;
 	std::cout << w << " " << h << "\n";
 
 	screenW = w;
 	screenH = h;
+	screenDensity = DM->pixel_density;
+	this->coordinates = coordinates;
 
 	targetX = 0;
 	targetY = 0;
 	currentAngle = 0;
 	allowUsage = true;
+
 }
 
 void WiimoteMouse::ToggleIR(wiimote_t* mote)
@@ -90,7 +104,7 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 	//normX = max(min(width, normX), 0);
 	//normY = max(min(height, normY), 0);
 
-	std::cout << normX << " " << normY << " nyaaaa \n";
+	//std::cout << normX << " " << normY << " nyaaaa \n";
 
 	// first get the differences in cursor position
 	float diffX = mCurrentCursorX - normX;
@@ -107,13 +121,20 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 	float newy = mCurrentCursorY - diffY;
 
 	// lastly, set the cursor position using the Windows API.
+
 	//SetCursorPos(newx, newy);
 	//mpCursorHandle->UpdatePosition(newx, newy, angle);
 
 	mCurrentCursorX = newx;
 	mCurrentCursorY = newy;
 
-	std::cout << newx << " " << newy << " nyaaaa \n";
+	int newWidth = (coordinates.w + coordinates.x) * screenDensity;
+	int newHeight = (coordinates.h + coordinates.y) * screenDensity;
+	newx = newx + (coordinates.x * screenDensity);
+	newy = newy + (coordinates.y * screenDensity);
+
+	mMouse.move_abs(newx, newy, newWidth, newHeight);
+	//std::cout << newx << " " << newy << " nyaaaa \n";
 
 }
 
@@ -198,7 +219,12 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 			MoveMouse(xPoint, yPoint, angle);
 
 			//MoveMouse(meanX / validSources, meanY / validSources);
-		};
+		}
+		else
+		{
+			std::cout << "no valid sources. \n";
+
+		}
 
 
 		if (IS_JUST_PRESSED(remote, WIIMOTE_BUTTON_A))
@@ -408,7 +434,7 @@ int WiimoteMouse::MainLoop(int* pCursorHandler)
 			if (wiiuse_poll(mote, 1))
 			{
 				// we know the wiimote is still active!
-				timeoutStart = std::chrono::steady_clock::now();
+				timeoutStart = steady_clock::now();
 				// then get the remote
 				auto remote = mote[0];
 				// and get its most recent event.
@@ -427,7 +453,7 @@ int WiimoteMouse::MainLoop(int* pCursorHandler)
 
 			}
 
-			std::chrono::seconds timeout = duration_cast<seconds>(steady_clock::now() - timeoutStart);
+			seconds timeout = duration_cast<seconds>(steady_clock::now() - timeoutStart);
 			if (timeout.count() >= 15)
 			{
 				// assume the wiimote is no longer connected after 15 seconds.
@@ -436,13 +462,13 @@ int WiimoteMouse::MainLoop(int* pCursorHandler)
 				// just in case it's still connected, clean some stuff up.
 				wiiuse_set_leds(mote[0], WIIMOTE_LED_NONE);
 				
-				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+				std::this_thread::sleep_for(milliseconds(50));
 
 				// disconnect formally.
 				wiiuse_disconnect(mote[0]);
 				wiiuse_disconnected(mote[0]);
 
-				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+				std::this_thread::sleep_for(milliseconds(50));
 
 				// and now clean up the entire thing,
 				// this is so that we can reconnect later.
@@ -451,11 +477,11 @@ int WiimoteMouse::MainLoop(int* pCursorHandler)
 				break;
 			}
 
-			std::chrono::milliseconds timeSpent = duration_cast<milliseconds>(steady_clock::now() - start);
+			milliseconds timeSpent = duration_cast<milliseconds>(steady_clock::now() - start);
 			if (timeSpent.count() >= 33)
 			{
 				//printf("%i ms", timeSpent.count());
-				start = std::chrono::steady_clock::now();
+				start = steady_clock::now();
 				//mpCursorHandle->WindowUpdate();
 			}
 			MoveMouse(targetX, targetY, currentAngle);

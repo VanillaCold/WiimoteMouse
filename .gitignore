@@ -14,3 +14,4 @@ cmake_install.cmake
 compile_commands.json
 libwmm.so
 Makefile
+_deps/
