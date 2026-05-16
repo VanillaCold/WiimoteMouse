@@ -184,23 +184,13 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 		// In this case, we're only interested in the first two sensors,
 		// as dealing with errors in the other two could result in some wonky shenanigans.
-		for (int i = 0; i < 4; ++i) {
-			if (remote->ir.dot[i].visible) {
-
-
-
-				//HDC screenDC = ::GetDC(0);
-				//::Rectangle(screenDC, remote->ir.dot[i].x-1, remote->ir.dot[i].y-1, remote->ir.dot[i].x+1, remote->ir.dot[i].y+1);
-				//::ReleaseDC(0, screenDC);
-
-				//if (validSources < 2)
-				//{
+		for (int i = 0; i < 4; ++i)
+		{
+			if (remote->ir.dot[i].visible)
+			{
 				meanX += remote->ir.dot[i].x;
 				meanY += remote->ir.dot[i].y;
 				validSources++;
-
-				//printf("%u, %u, ", remote->ir.dot[i].x, remote->ir.dot[i].y);
-				//}
 			}
 		}
 		//printf("\n");
@@ -210,29 +200,12 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 		{
 			int dx = int(remote->ir.dot[1].x) - int(remote->ir.dot[0].x);
 			int dy = int(remote->ir.dot[1].y) - int(remote->ir.dot[0].y);
-
-			//printf("point diff is %u, %u, \n", dx, dy);
 			
 			angle = atan2f(dy, dx);
-			//std::cout << remote->ir.vres[0] << " " << remote->ir.vres[1] << "\n";
-			//printf("angle is %f\n", angle);
-
-			//string.sprintf("%f", angle);
 		}
 		//M_PI_4
 		auto xPoint = remote->ir.x;
 		auto yPoint = remote->ir.y;
-
-		//if (angle != 0)
-		//{
-			//auto point = WiiCursorHandler::RotateAboutPoint(remote->ir.x, remote->ir.y, remote->ir.vres[0] / 2, remote->ir.vres[1] / 2, angle);
-		//	xPoint = point.first;
-		//	yPoint = point.second;
-		//}
-
-
-		//printf("IR cursor: (%u, %u)\n", remote->ir.x, remote->ir.y);
-		//printf("IR z distance: %f\n", remote->ir.z);
 
 		// If there's a non-even or zero number of IR dots detected, we don't want to use the info to move the mouse.
 		if (validSources > 1)
