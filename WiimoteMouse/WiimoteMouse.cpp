@@ -11,6 +11,7 @@
 #include <math.h>
 
 #include "WiimoteMouse.h"
+#include <chrono>
 
 
 extern "C" {
@@ -60,7 +61,17 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 	targetY = y;
 	currentAngle = angle;
 
+	while (angle < 0)
+	{
+		angle += M_PI * 2;
+	}
+	while (angle > M_PI * 2)
+	{
+		angle -= M_PI * 2;
+	}
+
 	angle = (M_PI * 2) - angle;
+	//angle = angle + M_PI*2; //*360 / (M_PI * 2);
 
 	float tX = (x - 280)*cos(angle) - (y - 210)*sin(angle);
 	float tY = (x - 280)*sin(angle) + (y - 210)*cos(angle);
@@ -68,12 +79,14 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 	tX += (560.0f/2.0f);
 	tY += (420.0f/2.0f);
 
-	std::cout << x << " " << y << " " << angle << " " << tX << " " << tY << "\n";
+	//std::cout << tX - x << " " << tY - y << " a\n";
 
 	//560 420 is the normal res.
-	float normX = ((tX-40) / 480.0f);
-	float normY = (tY-20) / 380.0f;
+	float normX = ((x-40) / 480.0f);
+	float normY = (y-20) / 380.0f;
 
+
+	std::cout << x << " " << y << " " << angle << " " << cos(angle) << " " << normX << " " << normY << "\n";
 
 	//printf("%f, %f, \n", normX, normY);
 
@@ -103,8 +116,8 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 		// Multiply the difference by its square root, and divide by the sqrt of the screen size.
 		// this smooths out the position, at the cost of being less responsive.
 		// might be possible to use the motion+ gyroscope to better smooth it out? but idk.
-		diffX *= (abs(diffX)) / (screenW);
-		diffY *= (abs(diffY)) / (screenH);
+		diffX *= (abs(diffX)) / (width);
+		diffY *= (abs(diffY)) / (height);
 		
 		// Subtract the new smoothed difference in coordinates.
 		int newx = point.x - diffX;
@@ -177,19 +190,19 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 		{
 			if (validSources % 2 != 0)
 			{
-				uint minX = 9999;//remote->ir.dot[0].x;
-				uint minY = 9999;//remote->ir.dot[0].y;
-				uint maxX = -1;//remote->ir.dot[0].x;
-				uint maxY = -1;//remote->ir.dot[0].y;
+				uint32_t minX = 9999;//remote->ir.dot[0].x;
+				uint32_t minY = 9999;//remote->ir.dot[0].y;
+				uint32_t maxX = -1;//remote->ir.dot[0].x;
+				uint32_t maxY = -1;//remote->ir.dot[0].y;
 
 				for (int i = 0; i < validSources; i++)
 				{
 					if (remote->ir.dot[i].visible)
 					{
-						minX = std::min(minX, remote->ir.dot[i].x);
-						maxX = std::max(maxX, remote->ir.dot[i].x);
-						minY = std::min(minY, remote->ir.dot[i].y);
-						maxY = std::max(maxY, remote->ir.dot[i].y);
+						minX = min(minX, remote->ir.dot[i].x);
+						maxX = max(maxX, remote->ir.dot[i].x);
+						minY = min(minY, remote->ir.dot[i].y);
+						maxY = max(maxY, remote->ir.dot[i].y);
 						std::cout << remote->ir.dot[i].x << " " << remote->ir.dot[i].y << " " << i << " ";
 					}
 					std::cout << "\n";
@@ -374,6 +387,7 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 {
+	using namespace std::chrono;
 	mpCursorHandle = pCursorHandler;
 
 	auto width = GetSystemMetrics(SM_CXSCREEN);
@@ -390,12 +404,13 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 	while (true)
 	{
 
-		Sleep(150);
+		std::this_thread::sleep_for(milliseconds(150));
 		// Find up to one wiimote with a 5 second timeout.
 		int found = wiiuse_find(mote, 1, 5);
 		if (!found) {
 			// Restart the loop at this point
 			// so that the program will just be looping for until a wii remote is found.
+			std::cout << "hi" << "\n";
 			continue;
 		}
 		else
@@ -418,13 +433,13 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 		wiiuse_set_leds(mote[0], WIIMOTE_LED_1);
 		wiiuse_rumble(mote[0], 1);
 
-		Sleep(200);
+		std::this_thread::sleep_for(milliseconds(200));
 
 		wiiuse_rumble(mote[0], 0);
 
 		// give more time to wait so that the wii remote doesn't like
 		// mess stuff up.
-		Sleep(150);
+		std::this_thread::sleep_for(milliseconds(150));
 
 
 		// enable IR, if it's not enabled.
@@ -450,6 +465,8 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 			// If the wii remote gives an event,
 			if (wiiuse_poll(mote, 1))
 			{
+
+				std::cout << WIIUSE_USING_ACC(mote[0]) << " " << WIIUSE_USING_EXP(mote[0]) << "\n";
 				// we know the wiimote is still active!
 				timeoutStart = std::chrono::steady_clock::now();
 				// then get the remote
@@ -479,13 +496,13 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 				// just in case it's still connected, clean some stuff up.
 				wiiuse_set_leds(mote[0], WIIMOTE_LED_NONE);
 				
-				Sleep(50);
+				std::this_thread::sleep_for(milliseconds(50));
 
 				// disconnect formally.
 				wiiuse_disconnect(mote[0]);
 				wiiuse_disconnected(mote[0]);
 
-				Sleep(50);
+				std::this_thread::sleep_for(milliseconds(50));
 
 				// and now clean up the entire thing,
 				// this is so that we can reconnect later.
@@ -494,11 +511,11 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 				break;
 			}
 
-			std::chrono::milliseconds timeSpent = duration_cast<milliseconds>(steady_clock::now() - start);
+			milliseconds timeSpent = duration_cast<milliseconds>(steady_clock::now() - start);
 			if (timeSpent.count() >= 33)
 			{
 				//printf("%i ms", timeSpent.count());
-				start = std::chrono::steady_clock::now();
+				start = steady_clock::now();
 				mpCursorHandle->WindowUpdate();
 			}
 			MoveMouse(targetX, targetY, currentAngle);
