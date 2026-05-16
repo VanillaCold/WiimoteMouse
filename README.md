@@ -14,12 +14,13 @@ Although there isn't much practical use for this on regular desktop Windows, the
 - Left, right and middle mouse buttons, mapped to A, B and 1 respectively.
 - Scrolling, using up and down on the directional pad.
 - IR cursor pointing, with rudimentary stabilization
-- A custom Wii Remote cursor that rotates with the remote, as in the Wii Menu
+- A custom Wii Remote cursor that rotates with the remote, as in the Wii Menu (Windows only for now)
 
 ### Planned Features
 - A settings menu, styled after the Wii's Home Menu and accessed by pressing the Home button
 - Screen calibration settings
 - An option to use the regular Windows cursor instead of the Wii Remote cursor
+- Modern gamepad emulation, so that the Wii Remote + Nunchuck can be used to play games.
 
 ### Features that I want to add at some point but am unsure how:
 - Improved cursor stabilization using Wii Motion Plus.
