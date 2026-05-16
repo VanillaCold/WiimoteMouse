@@ -1,6 +1,7 @@
+
 # Wiimote Mouse
 
-<img width="1754" height="881" alt="wiimote mouse logo" src="https://github.com/user-attachments/assets/5b8e3466-a1f2-41cb-9630-8702cc1e253b" />
+<img width="2632" height="1124" alt="wiimote mouse icon_transp" src="https://github.com/user-attachments/assets/837bcef0-6c93-4dfb-bd05-e193713ec6c3" />
 (logo art by VanillaCold)
 
 
