@@ -80,17 +80,42 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 	// For instance,
 
 	// Give a buffer of 40 on X and 20 on Y.
-	// the max right value is about 550, and the max y value is about 420, so divide by this number minus twice the buffer size.
+	// the max right value is about 560, and the max y value is about 420, so divide by this number minus twice the buffer size.
 
 	// I do plan on making all this customisable. The base values shouldn't need to be changed, I think, but the buffer will need to be malleable.
 	
+	if (x < 0 || y < 0 || x > 560 || y > 420)
+	{
+		return;
+	}
+
 	targetX = x;
 	targetY = y;
 	currentAngle = angle;
 
-	float normX = ((x-40) / 470.0f);
-	float normY = (y-20) / 380.0f;
+	while (angle < 0)
+	{
+		angle += M_PI * 2;
+	}
+	while (angle > M_PI * 2)
+	{
+		angle -= M_PI * 2;
+	}
 
+
+	angle = (M_PI * 2) - angle;
+
+	float tX = (x - 280)*cos(angle) - (y - 210)*sin(angle);
+	float tY = (x - 280)*sin(angle) + (y - 210)*cos(angle);
+
+	tX += (560.0f/2.0f);
+	tY += (420.0f/2.0f);
+
+	std::cout << x << " " << y << " " << angle << " " << tX << " " << tY << "\n";
+
+	//560 420 is the normal res.
+	float normX = ((tX-40) / 480.0f);
+	float normY = (tY-20) / 380.0f;
 
 	//printf("%f, %f, \n", normX, normY);
 
@@ -189,7 +214,7 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 			//printf("point diff is %u, %u, \n", dx, dy);
 			
 			angle = atan2f(dy, dx);
-
+			//std::cout << remote->ir.vres[0] << " " << remote->ir.vres[1] << "\n";
 			//printf("angle is %f\n", angle);
 
 			//string.sprintf("%f", angle);
@@ -214,17 +239,22 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 		{
 			if (validSources % 2 != 0)
 			{
-				uint minX = remote->ir.dot[0].x;
-				uint minY = remote->ir.dot[0].y;
-				uint maxX = remote->ir.dot[0].x;
-				uint maxY = remote->ir.dot[0].y;
+				uint minX = 9999;//remote->ir.dot[0].x;
+				uint minY = 9999;//remote->ir.dot[0].y;
+				uint maxX = -1;//remote->ir.dot[0].x;
+				uint maxY = -1;//remote->ir.dot[0].y;
 
 				for (int i = 0; i < validSources; i++)
 				{
-					minX = std::min(minX, remote->ir.dot[i].x);
-					maxX = std::max(maxX, remote->ir.dot[i].x);
-					minY = std::min(minY, remote->ir.dot[i].y);
-					maxY = std::max(maxY, remote->ir.dot[i].y);
+					if (remote->ir.dot[i].visible)
+					{
+						minX = std::min(minX, remote->ir.dot[i].x);
+						maxX = std::max(maxX, remote->ir.dot[i].x);
+						minY = std::min(minY, remote->ir.dot[i].y);
+						maxY = std::max(maxY, remote->ir.dot[i].y);
+						std::cout << remote->ir.dot[i].x << " " << remote->ir.dot[i].y << " " << i << " ";
+					}
+					std::cout << "\n";
 				}
 
 				xPoint = minX + maxX / 2;
@@ -433,7 +463,7 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 			{
 				//printf("%i ms", timeSpent.count());
 				start = steady_clock::now();
-				mpCursorHandle->WindowUpdate();
+				//mpCursorHandle->WindowUpdate();
 			}
 			MoveMouse(targetX, targetY, currentAngle);
 		}
