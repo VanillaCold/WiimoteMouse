@@ -16,7 +16,7 @@
 #include <inputtino/input.hpp>
 
 //#include <Windows.h>
-//#include "WiiCursorHandler.h"
+#include "WiiCursorHandler.h"
 
 struct Point
 {
@@ -30,12 +30,12 @@ public:
 	WiimoteMouse();
 
 	void ToggleIR(wiimote_t* mote);
-	int MainLoop(int* pCursorHandler);
+	int MainLoop(WiiCursorHandler* pCursorHandler);
 
 	void HandleEvent(wiimote* remote);
 	void MoveMouse(int x, int y, float angle = 0);
 
-	//WiiCursorHandler* mpCursorHandle;
+	WiiCursorHandler* mpCursorHandle;
 	int targetX;
 	int targetY;
 	float currentAngle;

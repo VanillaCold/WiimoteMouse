@@ -10,6 +10,8 @@ add_compile_options(-fPIC)
 
 add_library(wmm
   SHARED
+    WiiCursorHandler.cpp
+    WiiCursorHandler.h
     WiimoteMouse.cpp
     WiimoteMouse.h
   )

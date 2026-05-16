@@ -8,11 +8,18 @@
 #include <utility>
 
 
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_log.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_video.h>
+#include <SDL3/SDL_rect.h>
+
+
 
 class WiiCursorHandler
 {
 public:
-	WiiCursorHandler(HINSTANCE pInstance);
+	WiiCursorHandler();//HINSTANCE pInstance);
 
 	void OnConnect();
 	void OnDisconnect();
@@ -20,10 +27,11 @@ public:
 	void WindowUpdate();
 
 	void UpdatePosition(int x, int y, float angle);
-	HWND mpWindow;
-	HINSTANCE mpHInstance;
+	SDL_Window* mpWindow;
+	SDL_Renderer* mpRenderer;
+	//HINSTANCE mpHInstance;
 
-	HCURSOR customCursor;
+	//HCURSOR customCursor;
 
 	float angle;
 

@@ -1,22 +1,39 @@
 #define OEMRESOURCE
-#include "WiiCursorHandler.h";
+#include "WiiCursorHandler.h"
 
 
 //#include <Windows.h>
 #include <math.h>
 
 
-WiiCursorHandler::WiiCursorHandler(HINSTANCE pInstance)
+WiiCursorHandler::WiiCursorHandler()//HINSTANCE pInstance)
 {
     angle = 0;
-    mpHInstance = pInstance;
-    customCursor = LoadCursorFromFile(L"cursor1.cur");
+    //mpWindow = SDL_CreateWindow("SDL3 Image",512, 512, SDL_WINDOW_BORDERLESS | SDL_WINDOW_TRANSPARENT | SDL_WINDOW_NOT_FOCUSABLE | SDL_WINDOW_ALWAYS_ON_TOP );
+    //mpRenderer = SDL_CreateRenderer(mpWindow, NULL);
+    //mpHInstance = pInstance;
+    //customCursor = LoadCursorFromFile(L"cursor1.cur");
+    //SDL_Surface* bmp = SDL_LoadPNG("MainCursor.png");
+    //SDL_Cursor* cursor = SDL_CreateColorCursor(bmp, 10, 10);
+    //SDL_Texture* tex = SDL_CreateTextureFromSurface(mpRenderer, bmp);
+
+
+    //SDL_SetWindowShape(mpWindow, bmp);
+    //SDL_RenderClear(mpRenderer);
+    //SDL_RenderTexture(mpRenderer, tex, NULL, NULL);
+    //SDL_RenderPresent(mpRenderer);
+    //SDL_DestroySurface(bmp)
+    //SDL_SetCursor(cursor);
+    ;
+
+    //SDL_Event e;
+
 }
 
 void WiiCursorHandler::OnConnect()
 {
     
-    mpWindow = CreateWindowEx(
+    /*mpWindow = CreateWindowEx(
         WS_EX_COMPOSITED | WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT | WS_EX_TOPMOST,                              // Optional window styles.
         L"WiiCursorWinProc",                     // Window class
         L"",    // Window text
@@ -46,64 +63,20 @@ void WiiCursorHandler::OnConnect()
     
 
     ShowWindow(mpWindow, 1);
-    SetWindowPos(mpWindow, nullptr, 0, 0, 256, 256, 0);
-
-
-    //CreateCursor(NULL, 0, 0, 1, 1, new BYTE (0), new BYTE (1));
-    
-
-    //Need to copy the cursor each time as SetSystemCursor consumes the cursor
-    HCURSOR cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_APPSTARTING);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_NORMAL);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_CROSS);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_HAND);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_IBEAM);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_NO);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_SIZEALL);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_SIZENESW);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_SIZENS);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_SIZENWSE);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_SIZEWE);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_UP);
-
-    cursorCopy = CopyCursor(customCursor);
-    SetSystemCursor(cursorCopy, OCR_WAIT);
+    SetWindowPos(mpWindow, nullptr, 0, 0, 256, 256, 0);*/
 
 
 }
 
 void WiiCursorHandler::OnDisconnect()
 {
-    DestroyWindow(mpWindow);
-    SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
+    //DestroyWindow(mpWindow);
+    //SystemParametersInfo(SPI_SETCURSORS, 0, nullptr, 0);
 }
 
 void WiiCursorHandler::WindowUpdate()
 {
-    RedrawWindow(mpWindow, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+    /*RedrawWindow(mpWindow, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
     
     // we really, really want to encounter a lot of messages-
     MSG msg = { };
@@ -114,15 +87,15 @@ void WiiCursorHandler::WindowUpdate()
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-    }
+    }*/
 
 }
 
 void WiiCursorHandler::UpdatePosition(int x, int y, float angle)
 {
-    SetCapture(mpWindow);
-    ShowCursor(false);
-    SetWindowPos(mpWindow, nullptr, x-128, y-128, 256, 256, 0);
+    //SetCapture(mpWindow);
+    //ShowCursor(false);
+    //SetWindowPos(mpWindow, nullptr, x-128, y-128, 256, 256, 0);
     this->angle = angle;
 }
 

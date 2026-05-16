@@ -123,7 +123,7 @@ void WiimoteMouse::MoveMouse(int x, int y, float angle)
 	// lastly, set the cursor position using the Windows API.
 
 	//SetCursorPos(newx, newy);
-	//mpCursorHandle->UpdatePosition(newx, newy, angle);
+	mpCursorHandle->UpdatePosition(newx, newy, angle);
 
 	mCurrentCursorX = newx;
 	mCurrentCursorY = newy;
@@ -295,9 +295,9 @@ void WiimoteMouse::HandleEvent(wiimote* remote)
 
 }
 
-int WiimoteMouse::MainLoop(int* pCursorHandler)
+int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 {
-	//mpCursorHandle = pCursorHandler;
+	mpCursorHandle = pCursorHandler;
 
 	// TODO get width and height
 	auto width = 2560;//GetSystemMetrics(SM_CXSCREEN);
@@ -433,11 +433,11 @@ int WiimoteMouse::MainLoop(int* pCursorHandler)
 			{
 				//printf("%i ms", timeSpent.count());
 				start = steady_clock::now();
-				//mpCursorHandle->WindowUpdate();
+				mpCursorHandle->WindowUpdate();
 			}
 			MoveMouse(targetX, targetY, currentAngle);
 		}
-		//mpCursorHandle->OnDisconnect();
+		mpCursorHandle->OnDisconnect();
 		sleep(1);
 	}
 	
