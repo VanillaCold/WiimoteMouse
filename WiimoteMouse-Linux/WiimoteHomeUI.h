@@ -7,6 +7,7 @@
 #include <SDL3/SDL_rect.h>
 #include <mutex>
 #include <unordered_map>
+#include <queue>
 
 enum class WiimoteUIMessageType
 {
@@ -26,15 +27,19 @@ class WiimoteHomeUI
 {
     // Internal function to create the menu thread, and the window.
     bool CreateMenuInternal();
-    // Internal;
+    // Internal function to tell the menu thread to close.
     void CloseMenuInternal();
+    // Internal function that deletes the window.
+    void DeleteMenuInternal();
+    void HomeMenuLoop();
 
     bool mbIsWindowOpen;
 
     std::thread mWindowThread;
-
+    SDL_Window* mpHomeWindow;
     std::mutex mMessageMutex;
-    WiimoteUIMessage mMessage;
+    std::queue<WiimoteUIMessage*> mSentMessages;
+    std::queue<WiimoteUIMessage*> mRecievedMessages;
 
 public:
     WiimoteHomeUI();
@@ -42,6 +47,6 @@ public:
     bool OpenMenu();
     // Simple user-facing "menu close" function.
     void CloseMenu();
-    void SendMessage();
-    void RecieveMessage();
+    void SendMessage(WiimoteUIMessage& msg);
+    WiimoteUIMessage* ReceiveMessage(bool receiver);
 };

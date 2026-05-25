@@ -14,6 +14,8 @@ add_library(wmm
     WiiCursorHandler.h
     WiimoteMouse.cpp
     WiimoteMouse.h
+    WiimoteHomeUI.cpp
+    WiimoteHomeUI.h
   )
 
 
