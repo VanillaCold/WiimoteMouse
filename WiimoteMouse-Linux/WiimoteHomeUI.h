@@ -42,7 +42,7 @@ class WiimoteHomeUI
 
     bool mbIsWindowOpen;
 
-    std::thread mpWindowThread;
+    //std::thread mpWindowThread;
     SDL_Window* mpHomeWindow;
     SDL_Renderer* mpHomeRenderer;
     std::mutex mMessageMutex;
@@ -58,6 +58,8 @@ public:
     bool OpenMenu();
     // Simple user-facing "menu close" function.
     void CloseMenu();
+    void DoLoop();
     void SendMessage(WiimoteUIMessage* msg);
+    std::chrono::steady_clock::time_point mLastTime;
     WiimoteUIMessage* ReceiveMessage(bool receiver);
 };

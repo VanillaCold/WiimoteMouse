@@ -13,7 +13,7 @@
 
 
 #include "WiimoteMouse.h"
-
+#include "WiimoteHomeUI.h"
 
 
 extern "C" {
@@ -438,6 +438,7 @@ int WiimoteMouse::MainLoop(WiiCursorHandler* pCursorHandler)
 				start = steady_clock::now();
 				//mpCursorHandle->WindowUpdate();
 			}
+			WiimoteHomeUI::Get()->DoLoop();
 			MoveMouse(targetX, targetY, currentAngle);
 		}
 		mpCursorHandle->OnDisconnect();
