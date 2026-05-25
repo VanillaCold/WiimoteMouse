@@ -1,14 +1,20 @@
 #include "WiimoteHomeUI.h"
+#include <iostream>
 #define MSG_UI 1
 #define MSG_WM 0
 
 
 
+
 WiimoteHomeUI::WiimoteHomeUI()
 {
-
+    sInstance = this;
 }
 
+WiimoteHomeUI::~WiimoteHomeUI()
+{
+    sInstance = nullptr;
+}
 
 
 
@@ -19,7 +25,7 @@ bool WiimoteHomeUI::CreateMenuInternal()
         "An SDL3 window",                  // window title
         640,                               // width, in pixels
         480,                               // height, in pixels
-        SDL_WINDOW_OPENGL |
+        //SDL_WINDOW_OPENGL |
         SDL_WINDOW_BORDERLESS |
         SDL_WINDOW_TRANSPARENT |
         SDL_WINDOW_ALWAYS_ON_TOP |
@@ -29,6 +35,26 @@ bool WiimoteHomeUI::CreateMenuInternal()
     {
         return false;
     }
+
+    SDL_Renderer* ren = SDL_CreateRenderer(mpHomeWindow, NULL);
+    if (!ren)
+    {
+        SDL_DestroyWindow(mpHomeWindow);
+        mpHomeWindow = nullptr;
+        return false;
+    }
+    mpHomeRenderer = ren;
+    SDL_Surface* bmp = SDL_LoadPNG("MainCursor.png");
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(ren, bmp);
+    SDL_DestroySurface(bmp);
+
+    //SDL_Event e;
+
+    SDL_RenderClear(ren);
+    //SDL_RenderTexture(ren, tex, NULL, NULL);
+    SDL_RenderPresent(ren);
+
+    SDL_DestroyTexture(tex);
 
     mpWindowThread = std::thread(&WiimoteHomeUI::HomeMenuLoop, this);
 
@@ -69,6 +95,12 @@ void WiimoteHomeUI::HomeMenuLoop()
             delete msg;
         }
         // Do game logic, present a frame, etc.
+        SDL_FRect rect(500, 500);
+
+        SDL_RenderClear(mpHomeRenderer);
+        SDL_RenderFillRect(mpHomeRenderer, &rect);
+        SDL_RenderPresent(mpHomeRenderer);
+        std::cout << "nya" << "\n";
     }
 
 }
@@ -84,10 +116,10 @@ void WiimoteHomeUI::CloseMenu()
     CloseMenuInternal();
 }
 
-void WiimoteHomeUI::SendMessage(WiimoteUIMessage& msg)
+void WiimoteHomeUI::SendMessage(WiimoteUIMessage* msg)
 {
     std::lock_guard<std::mutex> guard(mMessageMutex);
-    if (msg.source == 1)
+    if (msg->source == 1)
     {
         mSentMessages.emplace(msg);
         return;
@@ -123,4 +155,13 @@ WiimoteUIMessage* WiimoteHomeUI::ReceiveMessage(bool receiver)
         return value;
     }
 }
+
+
+
+WiimoteHomeUI * WiimoteHomeUI::Get()
+{
+    return sInstance;
+}
+
+WiimoteHomeUI* WiimoteHomeUI::sInstance;
 
