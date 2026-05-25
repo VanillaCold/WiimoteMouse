@@ -1,9 +1,12 @@
 #include "WiimoteHomeUI.h"
+#define MSG_UI 1
+#define MSG_WM 0
 
 
 
 WiimoteHomeUI::WiimoteHomeUI()
 {
+
 }
 
 
@@ -11,8 +14,25 @@ WiimoteHomeUI::WiimoteHomeUI()
 
 bool WiimoteHomeUI::CreateMenuInternal()
 {
-    //TODO: create window.
-    return false;
+
+    mpHomeWindow = SDL_CreateWindow(
+        "An SDL3 window",                  // window title
+        640,                               // width, in pixels
+        480,                               // height, in pixels
+        SDL_WINDOW_OPENGL |
+        SDL_WINDOW_BORDERLESS |
+        SDL_WINDOW_TRANSPARENT |
+        SDL_WINDOW_ALWAYS_ON_TOP |
+        SDL_WINDOW_MOUSE_CAPTURE           // flags
+    );
+    if (!mpHomeWindow)
+    {
+        return false;
+    }
+
+    mpWindowThread = std::thread(&WiimoteHomeUI::HomeMenuLoop, this);
+
+    return true;
 }
 
 
@@ -28,6 +48,29 @@ void WiimoteHomeUI::DeleteMenuInternal()
 
 void WiimoteHomeUI::HomeMenuLoop()
 {
+    bool done = false;
+    while (!done) {
+        SDL_Event event;
+
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+
+                //done = true;
+            }
+        }
+
+        auto msg = ReceiveMessage(MSG_UI);
+        if (msg != nullptr)
+        {
+            if (msg->type == WiimoteUIMessageType::CloseMenu)
+            {
+                done = true;
+            }
+            delete msg;
+        }
+        // Do game logic, present a frame, etc.
+    }
+
 }
 
 
@@ -43,6 +86,7 @@ void WiimoteHomeUI::CloseMenu()
 
 void WiimoteHomeUI::SendMessage(WiimoteUIMessage& msg)
 {
+    std::lock_guard<std::mutex> guard(mMessageMutex);
     if (msg.source == 1)
     {
         mSentMessages.emplace(msg);
@@ -55,7 +99,8 @@ void WiimoteHomeUI::SendMessage(WiimoteUIMessage& msg)
 // 0 is that the wiimote is the receiver, 1 is that the UI is the receiver.
 WiimoteUIMessage* WiimoteHomeUI::ReceiveMessage(bool receiver)
 {
-    if (receiver == 1)
+    std::lock_guard<std::mutex> guard(mMessageMutex);
+    if (receiver == MSG_UI)
     {
         // recieved from wiimote, go for mRecievedMessages
         if (mRecievedMessages.empty())

@@ -12,8 +12,9 @@
 enum class WiimoteUIMessageType
 {
     NoMessage,
+    SetMode,
+    IsClosed,
     CloseMenu,
-    SetMode
 };
 
 struct WiimoteUIMessage
@@ -35,7 +36,7 @@ class WiimoteHomeUI
 
     bool mbIsWindowOpen;
 
-    std::thread mWindowThread;
+    std::thread mpWindowThread;
     SDL_Window* mpHomeWindow;
     std::mutex mMessageMutex;
     std::queue<WiimoteUIMessage*> mSentMessages;
