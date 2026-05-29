@@ -8,6 +8,7 @@
 #include <mutex>
 #include <unordered_map>
 #include <queue>
+#include "UIClasses/IGuiElement.h"
 
 enum class WiimoteUIMessageType
 {
@@ -41,14 +42,19 @@ class WiimoteHomeUI
     void HomeMenuLoop();
 
     bool mbIsWindowOpen;
+    bool mbIsClosing;
 
     //std::thread mpWindowThread;
     SDL_Window* mpHomeWindow;
     SDL_Renderer* mpHomeRenderer;
+
     std::mutex mMessageMutex;
     std::queue<WiimoteUIMessage*> mSentMessages;
     std::queue<WiimoteUIMessage*> mRecievedMessages;
+    std::chrono::steady_clock::time_point mLastTime;
     static WiimoteHomeUI* sInstance;
+
+    std::vector<IGuiElement*> mGUIElements;
 
 public:
     WiimoteHomeUI();
@@ -60,6 +66,5 @@ public:
     void CloseMenu();
     void DoLoop();
     void SendMessage(WiimoteUIMessage* msg);
-    std::chrono::steady_clock::time_point mLastTime;
     WiimoteUIMessage* ReceiveMessage(bool receiver);
 };
